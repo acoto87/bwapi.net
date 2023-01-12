@@ -6,7 +6,7 @@ namespace BWAPI.NET
     /// A side effect is an interaction that a bot attempts to have with the game.
     /// This entails sending a game or unit command, or drawing a shape.
     /// </summary>
-    public class SideEffect
+    public sealed class SideEffect
     {
         public static SideEffect AddUnitCommand(UnitCommandType type, int unit, int target, int x, int y, int extra)
         {

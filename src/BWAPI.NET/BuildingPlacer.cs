@@ -6,8 +6,34 @@ namespace BWAPI.NET
     public static class BuildingPlacer
     {
         private const int MaxRange = 64;
-        private static readonly TilePosition[] gDirections = new[]{new TilePosition(1, 1), new TilePosition(0, 1), new TilePosition(-1, 1), new TilePosition(1, 0), new TilePosition(-1, 0), new TilePosition(1, -1), new TilePosition(0, -1), new TilePosition(-1, -1)};
-        private static readonly BuildTemplate[] buildTemplates = new[]{new BuildTemplate(32, 0, 0, 1), new BuildTemplate(0, 32, 1, 0), new BuildTemplate(31, 0, 0, 1), new BuildTemplate(0, 31, 1, 0), new BuildTemplate(33, 0, 0, 1), new BuildTemplate(0, 33, 1, 0), new BuildTemplate(30, 0, 0, 1), new BuildTemplate(29, 0, 0, 1), new BuildTemplate(0, 30, 1, 0), new BuildTemplate(28, 0, 0, 1), new BuildTemplate(0, 29, 1, 0), new BuildTemplate(27, 0, 0, 1), new BuildTemplate(0, 28, 1, 0), new BuildTemplate(-1, 0, 0, 0)};
+        private static readonly TilePosition[] _directions = new[]
+        {
+            new TilePosition(1, 1),
+            new TilePosition(0, 1),
+            new TilePosition(-1, 1),
+            new TilePosition(1, 0),
+            new TilePosition(-1, 0),
+            new TilePosition(1, -1),
+            new TilePosition(0, -1),
+            new TilePosition(-1, -1)
+        };
+        private static readonly BuildTemplate[] buildTemplates = new[]
+        {
+            new BuildTemplate(32, 0, 0, 1),
+            new BuildTemplate(0, 32, 1, 0),
+            new BuildTemplate(31, 0, 0, 1),
+            new BuildTemplate(0, 31, 1, 0),
+            new BuildTemplate(33, 0, 0, 1),
+            new BuildTemplate(0, 33, 1, 0),
+            new BuildTemplate(30, 0, 0, 1),
+            new BuildTemplate(29, 0, 0, 1),
+            new BuildTemplate(0, 30, 1, 0),
+            new BuildTemplate(28, 0, 0, 1),
+            new BuildTemplate(0, 29, 1, 0),
+            new BuildTemplate(27, 0, 0, 1),
+            new BuildTemplate(0, 28, 1, 0),
+            new BuildTemplate(-1, 0, 0, 0)
+        };
 
         #pragma warning disable IDE0060
         public static TilePosition GetBuildLocation(UnitType type, TilePosition desiredPosition1, int maxRange, bool creep, Game game)
@@ -343,7 +369,7 @@ namespace BWAPI.NET
                         {
                             for (int dir = 0; dir < 8; ++dir)
                             {
-                                TilePosition p = new TilePosition(x, y).Add(gDirections[dir]);
+                                TilePosition p = new TilePosition(x, y).Add(_directions[dir]);
                                 if (!PlacementReserve.IsValidPos(p) || original.GetValue(p) == 0)
                                 {
                                     reserve.SetValue(p, (byte)0);
@@ -394,7 +420,7 @@ namespace BWAPI.NET
 
         private delegate void PlacementReserveExec(PlacementReserve placementReserve, int x, int y);
 
-        class BuildTemplate
+        readonly struct BuildTemplate
         {
             public readonly int startX;
             public readonly int startY;

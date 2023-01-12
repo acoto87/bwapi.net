@@ -191,9 +191,9 @@ namespace BWAPI.NET
         public int Minerals()
         {
             var minerals = _playerData.GetMinerals();
-            if (_game.IsLatComEnabled() && Self().minerals.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().Minerals.Valid(_game.GetFrameCount()))
             {
-                return minerals + Self().minerals.Get();
+                return minerals + Self().Minerals.Get();
             }
 
             return minerals;
@@ -208,9 +208,9 @@ namespace BWAPI.NET
         public int Gas()
         {
             var gas = _playerData.GetGas();
-            if (_game.IsLatComEnabled() && Self().gas.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().Gas.Valid(_game.GetFrameCount()))
             {
-                return gas + Self().gas.Get();
+                return gas + Self().Gas.Get();
             }
 
             return gas;
@@ -351,9 +351,9 @@ namespace BWAPI.NET
         public int SupplyUsed(Race race)
         {
             var supplyUsed = _playerData.GetSupplyUsed(race);
-            if (_game.IsLatComEnabled() && Self().supplyUsed[(int)race].Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().SupplyUsed[(int)race].Valid(_game.GetFrameCount()))
             {
-                return supplyUsed + Self().supplyUsed[(int)race].Get();
+                return supplyUsed + Self().SupplyUsed[(int)race].Get();
             }
 
             return supplyUsed;
@@ -525,9 +525,9 @@ namespace BWAPI.NET
         /// </remarks>
         public bool IsResearching(TechType tech)
         {
-            if (_game.IsLatComEnabled() && Self().isResearching[(int)tech].Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().IsResearching[(int)tech].Valid(_game.GetFrameCount()))
             {
-                return Self().isResearching[(int)tech].Get();
+                return Self().IsResearching[(int)tech].Get();
             }
 
             return _playerData.IsResearching(tech);
@@ -541,9 +541,9 @@ namespace BWAPI.NET
         /// <remarks>@seeUnit#upgrade</remarks>
         public bool IsUpgrading(UpgradeType upgrade)
         {
-            if (_game.IsLatComEnabled() && Self().isUpgrading[(int)upgrade].Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().IsUpgrading[(int)upgrade].Valid(_game.GetFrameCount()))
             {
-                return Self().isUpgrading[(int)upgrade].Get();
+                return Self().IsUpgrading[(int)upgrade].Get();
             }
 
             return _playerData.IsUpgrading(upgrade);

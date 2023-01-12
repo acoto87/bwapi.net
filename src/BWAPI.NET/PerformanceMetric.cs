@@ -7,7 +7,7 @@ namespace BWAPI.NET
     /// <summary>
     /// Aggregates labeled time series data.
     /// </summary>
-    public class PerformanceMetric
+    public sealed class PerformanceMetric
     {
         private readonly string _name;
 

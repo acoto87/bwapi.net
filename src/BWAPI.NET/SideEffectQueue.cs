@@ -5,7 +5,7 @@ namespace BWAPI.NET
     /// <summary>
     /// Queue of intended bot interactions with the game, to be flushed as JBWAPI returns control to StarCraft after a frame.
     /// </summary>
-    public class SideEffectQueue
+    public sealed class SideEffectQueue
     {
         private readonly List<SideEffect> _queue = new List<SideEffect>();
 

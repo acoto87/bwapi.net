@@ -6,7 +6,7 @@ namespace BWAPI.NET
     /**
      * Collects various performance metrics.
      */
-    public class PerformanceMetrics
+    public sealed class PerformanceMetrics
     {
         private BWClientConfiguration _configuration;
         private readonly List<PerformanceMetric> _performanceMetrics = new List<PerformanceMetric>();
@@ -23,8 +23,6 @@ namespace BWAPI.NET
          */
         public void Reset()
         {
-            _performanceMetrics.Clear();
-
             FrameDurationReceiveToSend = new PerformanceMetric("Frame duration: After receiving 'frame ready' -> before sending 'frame done'", 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 85);
             FrameDurationReceiveToSent = new PerformanceMetric("Frame duration: After receiving 'frame ready' -> after sending 'frame done'", 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 85);
             FrameDurationReceiveToReceive = new PerformanceMetric("Frame duration: After receiving 'frame ready' -> receiving next 'frame ready'", 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 85);
@@ -43,6 +41,7 @@ namespace BWAPI.NET
             NumberOfEvents = new PerformanceMetric("Number of events received from BWAPI", 1, 2, 3, 4, 5, 6, 8, 10, 15, 20);
             NumberOfEventsTimesDurationReceiveToSent = new PerformanceMetric("Number of events received from BWAPI, multiplied by the receive-to-sent duration of that frame", 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 85);
 
+            _performanceMetrics.Clear();
             _performanceMetrics.Add(FrameDurationReceiveToSend);
             _performanceMetrics.Add(FrameDurationReceiveToSent);
             _performanceMetrics.Add(FrameDurationReceiveToReceive);

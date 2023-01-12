@@ -1,28 +1,28 @@
 namespace BWAPI.NET
 {
-    public class PlayerSelf
+    public sealed class PlayerSelf
     {
-        public readonly IntegerCache minerals = new IntegerCache();
-        public readonly IntegerCache gas = new IntegerCache();
-        public readonly IntegerCache[] supplyUsed = new IntegerCache[3];
-        public readonly BooleanCache[] isResearching = new BooleanCache[(int)TechType.Unknown];
-        public readonly BooleanCache[] isUpgrading = new BooleanCache[(int)UpgradeType.Unknown];
+        public readonly IntegerCache Minerals = new IntegerCache();
+        public readonly IntegerCache Gas = new IntegerCache();
+        public readonly IntegerCache[] SupplyUsed = new IntegerCache[3];
+        public readonly BooleanCache[] IsResearching = new BooleanCache[(int)TechType.Unknown];
+        public readonly BooleanCache[] IsUpgrading = new BooleanCache[(int)UpgradeType.Unknown];
 
         public PlayerSelf()
         {
-            for (var i = 0; i < supplyUsed.Length; i++)
+            for (var i = 0; i < SupplyUsed.Length; i++)
             {
-                supplyUsed[i] = new IntegerCache();
+                SupplyUsed[i] = new IntegerCache();
             }
 
-            for (var i = 0; i < isResearching.Length; i++)
+            for (var i = 0; i < IsResearching.Length; i++)
             {
-                isResearching[i] = new BooleanCache();
+                IsResearching[i] = new BooleanCache();
             }
 
-            for (var i = 0; i < isUpgrading.Length; i++)
+            for (var i = 0; i < IsUpgrading.Length; i++)
             {
-                isUpgrading[i] = new BooleanCache();
+                IsUpgrading[i] = new BooleanCache();
             }
         }
     }

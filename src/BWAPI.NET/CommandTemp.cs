@@ -158,8 +158,8 @@ namespace BWAPI.NET
                     {
                         case EventType.Resource:
                         {
-                            _player.Self().minerals.SetOrAdd(-addonType.MineralPrice(), frame);
-                            _player.Self().gas.SetOrAdd(-addonType.GasPrice(), frame);
+                            _player.Self().Minerals.SetOrAdd(-addonType.MineralPrice(), frame);
+                            _player.Self().Gas.SetOrAdd(-addonType.GasPrice(), frame);
                             if (!isCurrentFrame)
                             {
 
@@ -194,8 +194,8 @@ namespace BWAPI.NET
                         case EventType.Resource:
                         {
                             var addonType = unit.GetBuildType();
-                            _player.Self().minerals.SetOrAdd((int)(addonType.MineralPrice() * 0.75), frame);
-                            _player.Self().gas.SetOrAdd((int)(addonType.GasPrice() * 0.75), frame);
+                            _player.Self().Minerals.SetOrAdd((int)(addonType.MineralPrice() * 0.75), frame);
+                            _player.Self().Gas.SetOrAdd((int)(addonType.GasPrice() * 0.75), frame);
                             unit.Self().BuildType.Set(UnitType.None, frame);
                             break;
                         }
@@ -244,8 +244,8 @@ namespace BWAPI.NET
                     if (_eventType == EventType.Resource)
                     {
                         unit.Self().BuildUnit.Set(-1, frame);
-                        _player.Self().minerals.SetOrAdd((int)(unit.GetUnitType().MineralPrice() * 0.75), frame);
-                        _player.Self().gas.SetOrAdd((int)(unit.GetUnitType().GasPrice() * 0.75), frame);
+                        _player.Self().Minerals.SetOrAdd((int)(unit.GetUnitType().MineralPrice() * 0.75), frame);
+                        _player.Self().Gas.SetOrAdd((int)(unit.GetUnitType().GasPrice() * 0.75), frame);
                         unit.Self().RemainingBuildTime.Set(0, frame);
                     }
 
@@ -260,7 +260,7 @@ namespace BWAPI.NET
                                 unit.Self().IsMorphing.Set(false, frame);
                                 unit.Self().Order.Set(Order.ResetCollision, frame);
                                 unit.Self().IsConstructing.Set(false, frame);
-                                _player.Self().supplyUsed[(int)unit.GetUnitType().GetRace()].SetOrAdd(unit.GetUnitType().SupplyRequired(), frame);
+                                _player.Self().SupplyUsed[(int)unit.GetUnitType().GetRace()].SetOrAdd(unit.GetUnitType().SupplyRequired(), frame);
                                 break;
                             }
                             case EventType.Order:
@@ -284,13 +284,13 @@ namespace BWAPI.NET
                             var newType = builtType.WhatBuilds().GetFirst();
                             if (newType.IsBuilding())
                             {
-                                _player.Self().minerals.SetOrAdd((int)(builtType.MineralPrice() * 0.75), frame);
-                                _player.Self().gas.SetOrAdd((int)(builtType.GasPrice() * 0.75), frame);
+                                _player.Self().Minerals.SetOrAdd((int)(builtType.MineralPrice() * 0.75), frame);
+                                _player.Self().Gas.SetOrAdd((int)(builtType.GasPrice() * 0.75), frame);
                             }
                             else
                             {
-                                _player.Self().minerals.SetOrAdd(builtType.MineralPrice(), frame);
-                                _player.Self().gas.SetOrAdd(builtType.GasPrice(), frame);
+                                _player.Self().Minerals.SetOrAdd(builtType.MineralPrice(), frame);
+                                _player.Self().Gas.SetOrAdd(builtType.GasPrice(), frame);
                             }
 
                             if (newType.IsBuilding() && newType.ProducesCreep())
@@ -328,8 +328,8 @@ namespace BWAPI.NET
                             }
                             else
                             {
-                                _player.Self().supplyUsed[(int)unit.GetUnitType().GetRace()].SetOrAdd(-(unit.GetUnitType().SupplyRequired() * (1 + (unit.GetUnitType().IsTwoUnitsInOneEgg() ? 1 : 0))), frame);
-                                _player.Self().supplyUsed[(int)unit.GetUnitType().GetRace()].SetOrAdd(unit.GetUnitType().WhatBuilds().GetFirst().SupplyRequired() * unit.GetUnitType().WhatBuilds().GetSecond(), frame); // Note: unit.getType().whatBuilds().second is always 1 but we
+                                _player.Self().SupplyUsed[(int)unit.GetUnitType().GetRace()].SetOrAdd(-(unit.GetUnitType().SupplyRequired() * (1 + (unit.GetUnitType().IsTwoUnitsInOneEgg() ? 1 : 0))), frame);
+                                _player.Self().SupplyUsed[(int)unit.GetUnitType().GetRace()].SetOrAdd(unit.GetUnitType().WhatBuilds().GetFirst().SupplyRequired() * unit.GetUnitType().WhatBuilds().GetSecond(), frame); // Note: unit.getType().whatBuilds().second is always 1 but we
                                 // might as well handle the general case, in case Blizzard
                                 // all of a sudden allows you to cancel archon morphs
                             }
@@ -364,8 +364,8 @@ namespace BWAPI.NET
                         case EventType.Resource:
                         {
                             var techType = unit.GetTech();
-                            _player.Self().minerals.SetOrAdd(techType.MineralPrice(), frame);
-                            _player.Self().gas.SetOrAdd(techType.GasPrice(), frame);
+                            _player.Self().Minerals.SetOrAdd(techType.MineralPrice(), frame);
+                            _player.Self().Gas.SetOrAdd(techType.GasPrice(), frame);
                             unit.Self().RemainingResearchTime.Set(0, frame);
                             unit.Self().Tech.Set(TechType.None, frame);
                             break;
@@ -387,8 +387,8 @@ namespace BWAPI.NET
                         if (_eventType == EventType.Resource)
                         {
                             var unitType = unit.GetTrainingQueue()[_command._extra];
-                            _player.Self().minerals.SetOrAdd(unitType.MineralPrice(), frame);
-                            _player.Self().gas.SetOrAdd(unitType.GasPrice(), frame);
+                            _player.Self().Minerals.SetOrAdd(unitType.MineralPrice(), frame);
+                            _player.Self().Gas.SetOrAdd(unitType.GasPrice(), frame);
 
                             // Shift training queue back one slot after the cancelled unit
                             for (var i = _command._extra; i < 4; ++i)
@@ -406,8 +406,8 @@ namespace BWAPI.NET
                             case EventType.Resource:
                             {
                                 var unitType = unit.GetTrainingQueue()[unit.GetTrainingQueueCount() - 1];
-                                _player.Self().minerals.SetOrAdd(unitType.MineralPrice(), frame);
-                                _player.Self().gas.SetOrAdd(unitType.GasPrice(), frame);
+                                _player.Self().Minerals.SetOrAdd(unitType.MineralPrice(), frame);
+                                _player.Self().Gas.SetOrAdd(unitType.GasPrice(), frame);
                                 unit.Self().BuildUnit.Set(-1, frame);
                                 if (unit.GetTrainingQueueCount() == 1)
                                 {
@@ -421,7 +421,7 @@ namespace BWAPI.NET
                             {
                                 unit.Self().TrainingQueueCount.SetOrAdd(-1, frame);
                                 var unitType = unit.GetTrainingQueue()[unit.GetTrainingQueueCount()];
-                                _player.Self().supplyUsed[(int)unitType.GetRace()].SetOrAdd(-unitType.SupplyRequired(), frame);
+                                _player.Self().SupplyUsed[(int)unitType.GetRace()].SetOrAdd(-unitType.SupplyRequired(), frame);
                                 if (unit.GetTrainingQueueCount() == 0)
                                 {
                                     unit.Self().BuildType.Set(UnitType.None, frame);
@@ -458,8 +458,8 @@ namespace BWAPI.NET
                         case EventType.Resource:
                         {
                             var unitType = unit.GetTrainingQueue()[unit.GetTrainingQueueCount() - 1];
-                            _player.Self().minerals.SetOrAdd(unitType.MineralPrice(), frame);
-                            _player.Self().gas.SetOrAdd(unitType.GasPrice(), frame);
+                            _player.Self().Minerals.SetOrAdd(unitType.MineralPrice(), frame);
+                            _player.Self().Gas.SetOrAdd(unitType.GasPrice(), frame);
                             unit.Self().BuildUnit.Set(-1, frame);
                             if (unit.GetTrainingQueueCount() == 1)
                             {
@@ -473,7 +473,7 @@ namespace BWAPI.NET
                         {
                             unit.Self().TrainingQueueCount.SetOrAdd(-1, frame);
                             var unitType = unit.GetTrainingQueue()[unit.GetTrainingQueueCount()];
-                            _player.Self().supplyUsed[(int)unitType.GetRace()].SetOrAdd(-unitType.SupplyRequired(), frame);
+                            _player.Self().SupplyUsed[(int)unitType.GetRace()].SetOrAdd(-unitType.SupplyRequired(), frame);
                             if (unit.GetTrainingQueueCount() == 0)
                             {
                                 unit.Self().BuildType.Set(UnitType.None, frame);
@@ -510,8 +510,8 @@ namespace BWAPI.NET
                         {
                             var upgradeType = unit.GetUpgrade();
                             var nextLevel = unit.GetPlayer().GetUpgradeLevel(upgradeType) + 1;
-                            _player.Self().minerals.SetOrAdd(upgradeType.MineralPrice(nextLevel), frame);
-                            _player.Self().gas.SetOrAdd(upgradeType.GasPrice(nextLevel), frame);
+                            _player.Self().Minerals.SetOrAdd(upgradeType.MineralPrice(nextLevel), frame);
+                            _player.Self().Gas.SetOrAdd(upgradeType.GasPrice(nextLevel), frame);
                             unit.Self().Upgrade.Set(UpgradeType.None, frame);
                             unit.Self().RemainingUpgradeTime.Set(0, frame);
                             break;
@@ -657,17 +657,17 @@ namespace BWAPI.NET
                                     unit.Self().Type.Set(morphType, frame);
                                 }
 
-                                _player.Self().minerals.SetOrAdd(-morphType.MineralPrice(), frame);
-                                _player.Self().gas.SetOrAdd(-morphType.GasPrice(), frame);
+                                _player.Self().Minerals.SetOrAdd(-morphType.MineralPrice(), frame);
+                                _player.Self().Gas.SetOrAdd(-morphType.GasPrice(), frame);
                             }
                             else
                             {
-                                _player.Self().supplyUsed[(int)morphType.GetRace()].SetOrAdd(morphType.SupplyRequired() * (1 + (morphType.IsTwoUnitsInOneEgg() ? 1 : 0)) - unit.GetUnitType().SupplyRequired(), frame);
+                                _player.Self().SupplyUsed[(int)morphType.GetRace()].SetOrAdd(morphType.SupplyRequired() * (1 + (morphType.IsTwoUnitsInOneEgg() ? 1 : 0)) - unit.GetUnitType().SupplyRequired(), frame);
                                 if (!isCurrentFrame)
                                 {
                                     unit.Self().Order.Set(Order.ZergUnitMorph, frame);
-                                    _player.Self().minerals.SetOrAdd(-morphType.MineralPrice(), frame);
-                                    _player.Self().gas.SetOrAdd(-morphType.GasPrice(), frame);
+                                    _player.Self().Minerals.SetOrAdd(-morphType.MineralPrice(), frame);
+                                    _player.Self().Gas.SetOrAdd(-morphType.GasPrice(), frame);
                                     switch (morphType)
                                     {
                                         case UnitType.Zerg_Lurker_Egg:
@@ -743,9 +743,9 @@ namespace BWAPI.NET
                     unit.Self().Tech.Set(techType, frame);
                     unit.Self().IsIdle.Set(false, frame);
                     unit.Self().RemainingResearchTime.Set(techType.ResearchTime(), frame);
-                    _player.Self().minerals.SetOrAdd(-techType.MineralPrice(), frame);
-                    _player.Self().gas.SetOrAdd(-techType.GasPrice(), frame);
-                    _player.Self().isResearching[(int)techType].Set(true, frame);
+                    _player.Self().Minerals.SetOrAdd(-techType.MineralPrice(), frame);
+                    _player.Self().Gas.SetOrAdd(-techType.GasPrice(), frame);
+                    _player.Self().IsResearching[(int)techType].Set(true, frame);
                     break;
                 }
                 case UnitCommandType.Return_Cargo:
@@ -855,15 +855,15 @@ namespace BWAPI.NET
                     {
 
                         // Happens on RLF, we don't want to duplicate this.
-                        _player.Self().minerals.SetOrAdd(-unitType.MineralPrice(), frame);
-                        _player.Self().gas.SetOrAdd(-unitType.GasPrice(), frame);
+                        _player.Self().Minerals.SetOrAdd(-unitType.MineralPrice(), frame);
+                        _player.Self().Gas.SetOrAdd(-unitType.GasPrice(), frame);
                     }
 
 
                     // Happens on RLF + 1, we want to pretend this happens on RLF.
                     unit.Self().TrainingQueue[unit.GetTrainingQueueCount()].Set(unitType, frame);
                     unit.Self().TrainingQueueCount.SetOrAdd(+1, frame);
-                    _player.Self().supplyUsed[(int)unitType.GetRace()].SetOrAdd(unitType.SupplyRequired(), frame);
+                    _player.Self().SupplyUsed[(int)unitType.GetRace()].SetOrAdd(unitType.SupplyRequired(), frame);
 
                     // Happens on RLF or RLF + 1, doesn't matter if we do twice
                     unit.Self().IsTraining.Set(true, frame);
@@ -926,9 +926,9 @@ namespace BWAPI.NET
                     unit.Self().IsIdle.Set(false, frame);
                     var level = unit.GetPlayer().GetUpgradeLevel(upgradeType);
                     unit.Self().RemainingUpgradeTime.Set(upgradeType.UpgradeTime(level + 1), frame);
-                    _player.Self().minerals.SetOrAdd(-upgradeType.MineralPrice(level + 1), frame);
-                    _player.Self().gas.SetOrAdd(upgradeType.GasPrice(level + 1), frame);
-                    _player.Self().isUpgrading[(int)upgradeType].Set(true, frame);
+                    _player.Self().Minerals.SetOrAdd(-upgradeType.MineralPrice(level + 1), frame);
+                    _player.Self().Gas.SetOrAdd(upgradeType.GasPrice(level + 1), frame);
+                    _player.Self().IsUpgrading[(int)upgradeType].Set(true, frame);
                     break;
                 }
                 case UnitCommandType.Use_Tech:
