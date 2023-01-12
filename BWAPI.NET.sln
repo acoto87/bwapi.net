@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B116BE81-C359-4425-883C-7D36A390071F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{778C530F-04A3-4231-96C1-D14A196F46C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BWAPI.NET", "src\BWAPI.NET\BWAPI.NET.csproj", "{EBF44DFB-D526-42A4-9420-C4BC79B89BCA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleBot", "tests\ExampleBot\ExampleBot.csproj", "{AFFDBF07-32A9-4E2A-99E1-E5DA24506594}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBF44DFB-D526-42A4-9420-C4BC79B89BCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBF44DFB-D526-42A4-9420-C4BC79B89BCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBF44DFB-D526-42A4-9420-C4BC79B89BCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBF44DFB-D526-42A4-9420-C4BC79B89BCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFFDBF07-32A9-4E2A-99E1-E5DA24506594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFFDBF07-32A9-4E2A-99E1-E5DA24506594}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFFDBF07-32A9-4E2A-99E1-E5DA24506594}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFFDBF07-32A9-4E2A-99E1-E5DA24506594}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EBF44DFB-D526-42A4-9420-C4BC79B89BCA} = {B116BE81-C359-4425-883C-7D36A390071F}
+		{AFFDBF07-32A9-4E2A-99E1-E5DA24506594} = {778C530F-04A3-4231-96C1-D14A196F46C9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4369EF8E-31BE-4D55-AE5E-9BEA6BF9E848}
+	EndGlobalSection
+EndGlobal
