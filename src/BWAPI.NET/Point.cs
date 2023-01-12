@@ -2,53 +2,67 @@ using System;
 
 namespace BWAPI.NET
 {
-    public abstract class Point<T> : IComparable<Point<T>>
-        where T : Point<T>
+    public interface IPoint<T> : IEquatable<T>, IComparable<T>
+        where T : IPoint<T>
     {
-        public const int TILE_WALK_FACTOR = 4; // 32 / 8
+        int X { get; }
 
-        public readonly int x;
-        public readonly int y;
-        private readonly int scalar;
+        int Y { get; }
 
-        protected Point(int x, int y, int type)
-        {
-            this.x = x;
-            this.y = y;
-            scalar = type;
-        }
+        double GetLength();
 
-        public virtual int GetX()
-        {
-            return x;
-        }
+        double GetDistance(T point);
 
-        public virtual int GetY()
-        {
-            return y;
-        }
+        int GetApproxDistance(T point);
 
-        public virtual double GetLength()
+        T Add(T other);
+
+        T Subtract(T other);
+
+        T Multiply(int multiplier);
+
+        T Divide(int divisor);
+
+        T SetMax(T p);
+
+        T SetMin(T p);
+
+        bool IsValid(Game game);
+
+        T MakeValid(Game game);
+    }
+
+    public static class PointHelper
+    {
+        /// <summary>
+        /// The scale of a <see cref="Position"/>. Each position corresponds to a 1x1 pixel area.
+        /// </summary>
+        public const int PositionScale = 1;
+
+        /// <summary>
+        /// The scale of a <see cref="WalkPosition"/>. Each walk position corresponds to an 8x8 pixel area.
+        /// </summary>
+        public const int WalkPositionScale = 8;
+
+        /// <summary>
+        /// The scale of a <see cref="TilePosition"/>. Each tile position corresponds to a 32x32 pixel area.
+        /// </summary>
+        public const int TilePositionScale = 32;
+
+        public const int TileWalkFactor = TilePositionScale / WalkPositionScale;
+
+        public static double GetLength(int x, int y)
         {
             return Math.Sqrt(x * x + y * y);
         }
 
-        public virtual double GetDistance(T point)
-        {
-            int dx = point.x - x;
-            int dy = point.y - y;
-            return Math.Sqrt(dx * dx + dy * dy);
-        }
-
-        private static int GetApproxDistance(int x1, int y1, int x2, int y2)
+        public static int GetApproxDistance(int x1, int y1, int x2, int y2)
         {
             var max = Math.Abs(x1 - x2);
             var min = Math.Abs(y1 - y2);
             if (max < min)
             {
-                var temp = min;
-                min = max;
-                max = temp;
+                (max, min) = (min, max);
             }
 
             if (min <= (max >> 2))
@@ -60,57 +74,49 @@ namespace BWAPI.NET
             return (minCalc >> 5) + minCalc + max - (max >> 4) - (max >> 6);
         }
 
-        public virtual int GetApproxDistance(T point)
+        public static bool IsValid(int x, int y, int scale, Game game)
         {
-            return GetApproxDistance(x, y, point.x, point.y);
-        }
-
-        public abstract T Subtract(T other);
-        public abstract T Add(T other);
-        public abstract T Divide(int divisor);
-        public abstract T Multiply(int multiplier);
-        public override bool Equals(object o)
-        {
-            if (this == o)
-            {
-                return true;
-            }
-
-            if (o == null || GetType() != o.GetType())
+            // Not valid if < 0
+            if (x < 0 || y < 0 )
             {
                 return false;
             }
 
-            var point = (Point<T>)o;
-            return x == point.x && y == point.y;
-        }
-
-        /// <summary>
-        /// Check if the current point is a valid point for the current game
-        /// </summary>
-        public virtual bool IsValid(Game game)
-        {
-            return x >= 0 && y >= 0 && scalar * x < game.MapPixelWidth() && scalar * y < game.MapPixelHeight();
-        }
-
-        public override int GetHashCode()
-        {
-            return (x << 16) ^ y;
-        }
-
-        public int CompareTo(Point<T> o)
-        {
-            if (scalar == o.scalar)
+            // If Broodwar pointer is not initialized, just assume maximum map size
+            if (game == null)
             {
-                return GetHashCode() - o.GetHashCode();
+                return x * scale < (256 * 32) && y * scale < (256 * 32);
             }
 
-            return scalar - o.scalar;
+            // If BW ptr exists then compare with actual map size
+            return x * scale < game.MapPixelWidth() &&  y * scale < game.MapPixelHeight();
         }
 
-        public override string ToString()
+        public static void MakeValid(int x, int y, int scale, Game game, out int xout, out int yout)
         {
-            return "[" + x + ", " + y + "]";
+            // Set x/y to 0 if less than 0
+            if (x < 0) x = 0;
+            if (y < 0) y = 0;
+
+            // If broodwar ptr doesn't exist, set to below max size
+            if (game == null)
+            {
+                var max = (256 * 32) / scale - 1;
+                if (x > max) x = max;
+                if (y > max) y = max;
+            }
+            else
+            {
+                var wid = game.MapPixelWidth() / scale - 1;
+                var hgt = game.MapPixelHeight() / scale - 1;
+
+                if (x > wid) x = wid;
+                if (y > hgt) y = hgt;
+            }
+
+            xout = x;
+            yout = y;
+            return;
         }
     }
 }

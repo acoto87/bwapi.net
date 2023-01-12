@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BWAPI.NET
 {
@@ -10,7 +7,7 @@ namespace BWAPI.NET
     /// </summary>
     public class SideEffectQueue
     {
-        private List<SideEffect> _queue = new List<SideEffect>();
+        private readonly List<SideEffect> _queue = new List<SideEffect>();
 
         /// <summary>
         /// Includes a side effect to be sent back to BWAPI in the future.

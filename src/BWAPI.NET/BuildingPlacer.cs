@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BWAPI.NET
 {
@@ -11,7 +9,9 @@ namespace BWAPI.NET
         private static readonly TilePosition[] gDirections = new[]{new TilePosition(1, 1), new TilePosition(0, 1), new TilePosition(-1, 1), new TilePosition(1, 0), new TilePosition(-1, 0), new TilePosition(1, -1), new TilePosition(0, -1), new TilePosition(-1, -1)};
         private static readonly BuildTemplate[] buildTemplates = new[]{new BuildTemplate(32, 0, 0, 1), new BuildTemplate(0, 32, 1, 0), new BuildTemplate(31, 0, 0, 1), new BuildTemplate(0, 31, 1, 0), new BuildTemplate(33, 0, 0, 1), new BuildTemplate(0, 33, 1, 0), new BuildTemplate(30, 0, 0, 1), new BuildTemplate(29, 0, 0, 1), new BuildTemplate(0, 30, 1, 0), new BuildTemplate(28, 0, 0, 1), new BuildTemplate(0, 29, 1, 0), new BuildTemplate(27, 0, 0, 1), new BuildTemplate(0, 28, 1, 0), new BuildTemplate(-1, 0, 0, 0)};
 
+        #pragma warning disable IDE0060
         public static TilePosition GetBuildLocation(UnitType type, TilePosition desiredPosition1, int maxRange, bool creep, Game game)
+        #pragma warning restore IDE0060
         {
             // Make sure the type is compatible
             if (!type.IsBuilding())
@@ -140,7 +140,7 @@ namespace BWAPI.NET
             TilePosition start = desiredPosition.Subtract(new TilePosition(MaxRange, MaxRange).Divide(2));
             reserve.Iterate((pr, x, y) =>
             {
-                if (!(start.Add(new TilePosition(x, y)).IsValid(game)))
+                if (!start.Add(new TilePosition(x, y)).IsValid(game))
                 {
                     pr.SetValue(x, y, (byte)0);
                 }

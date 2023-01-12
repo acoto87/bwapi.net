@@ -213,21 +213,25 @@ namespace BWAPI.NET
 
         private static string GetDefaultColor(int id)
         {
+#pragma warning disable IDE0074
             if (defaultColors == null)
+#pragma warning restore IDE0074
             {
-                defaultColors = new Dictionary<int, string>();
-                defaultColors.Add(Color.Red.id, "Red");
-                defaultColors.Add(Color.Blue.id, "Blue");
-                defaultColors.Add(Color.Teal.id, "Teal");
-                defaultColors.Add(Color.Purple.id, "Purple");
-                defaultColors.Add(Color.Orange.id, "Orange");
-                defaultColors.Add(Color.Brown.id, "Brown");
-                defaultColors.Add(Color.White.id, "White");
-                defaultColors.Add(Color.Yellow.id, "Yellow");
-                defaultColors.Add(Color.Green.id, "Green");
-                defaultColors.Add(Color.Cyan.id, "Cyan");
-                defaultColors.Add(Color.Black.id, "Black");
-                defaultColors.Add(Color.Grey.id, "Grey");
+                defaultColors = new Dictionary<int, string>
+                {
+                    { Color.Red.id, "Red" },
+                    { Color.Blue.id, "Blue" },
+                    { Color.Teal.id, "Teal" },
+                    { Color.Purple.id, "Purple" },
+                    { Color.Orange.id, "Orange" },
+                    { Color.Brown.id, "Brown" },
+                    { Color.White.id, "White" },
+                    { Color.Yellow.id, "Yellow" },
+                    { Color.Green.id, "Green" },
+                    { Color.Cyan.id, "Cyan" },
+                    { Color.Black.id, "Black" },
+                    { Color.Grey.id, "Grey" }
+                };
             }
 
             return defaultColors.GetValueOrDefault(id, null);

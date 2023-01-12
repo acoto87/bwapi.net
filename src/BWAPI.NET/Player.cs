@@ -565,35 +565,22 @@ namespace BWAPI.NET
         /// <returns>character code to use for text in Broodwar.</returns>
         public Text GetTextColor()
         {
-            switch (_color.id)
+            return _color.id switch
             {
-                case 111:
-                    return Text.BrightRed;
-                case 165:
-                    return Text.Blue;
-                case 159:
-                    return Text.Teal;
-                case 164:
-                    return Text.Purple;
-                case 156:
-                    return Text.Orange;
-                case 19:
-                    return Text.Brown;
-                case 84:
-                    return Text.PlayerWhite;
-                case 135:
-                    return Text.PlayerYellow;
-                case 185:
-                    return Text.DarkGreen;
-                case 136:
-                    return Text.LightYellow;
-                case 134:
-                    return Text.Tan;
-                case 51:
-                    return Text.GreyBlue;
-                default:
-                    return Text.Default;
-            }
+                111 => Text.BrightRed,
+                165 => Text.Blue,
+                159 => Text.Teal,
+                164 => Text.Purple,
+                156 => Text.Orange,
+                19 => Text.Brown,
+                84 => Text.PlayerWhite,
+                135 => Text.PlayerYellow,
+                185 => Text.DarkGreen,
+                136 => Text.LightYellow,
+                134 => Text.Tan,
+                51 => Text.GreyBlue,
+                _ => Text.Default,
+            };
         }
 
         /// <summary>
@@ -872,17 +859,13 @@ namespace BWAPI.NET
                 return true;
             }
 
-            switch (unit)
+            return unit switch
             {
-                case UnitType.Zerg_Hatchery:
-                    return CompletedUnitCount(UnitType.Zerg_Hatchery) + AllUnitCount(UnitType.Zerg_Lair) + AllUnitCount(UnitType.Zerg_Hive) >= amount;
-                case UnitType.Zerg_Lair:
-                    return CompletedUnitCount(UnitType.Zerg_Lair) + AllUnitCount(UnitType.Zerg_Hive) >= amount;
-                case UnitType.Zerg_Spire:
-                    return CompletedUnitCount(UnitType.Zerg_Spire) + AllUnitCount(UnitType.Zerg_Greater_Spire) >= amount;
-                default:
-                    return CompletedUnitCount(unit) >= amount;
-            }
+                UnitType.Zerg_Hatchery => CompletedUnitCount(UnitType.Zerg_Hatchery) + AllUnitCount(UnitType.Zerg_Lair) + AllUnitCount(UnitType.Zerg_Hive) >= amount,
+                UnitType.Zerg_Lair => CompletedUnitCount(UnitType.Zerg_Lair) + AllUnitCount(UnitType.Zerg_Hive) >= amount,
+                UnitType.Zerg_Spire => CompletedUnitCount(UnitType.Zerg_Spire) + AllUnitCount(UnitType.Zerg_Greater_Spire) >= amount,
+                _ => CompletedUnitCount(unit) >= amount,
+            };
         }
 
         public bool Equals(Player other)

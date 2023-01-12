@@ -6,7 +6,7 @@ namespace BWAPI.NET
 
     public static class UnitFilters
     {
-        public static readonly UnitFilter IsTransPort = u => u.GetUnitType().SpaceProvided() > 0 && u.GetUnitType() != UnitType.Terran_Bunker;
+        public static readonly UnitFilter IsTransport = u => u.GetUnitType().SpaceProvided() > 0 && u.GetUnitType() != UnitType.Terran_Bunker;
         public static readonly UnitFilter CanProduce = u => u.GetUnitType().CanProduce();
         public static readonly UnitFilter CanAttack = u => u.GetUnitType().CanAttack();
         public static readonly UnitFilter CanMove = u => u.GetUnitType().CanMove();

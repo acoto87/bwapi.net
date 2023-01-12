@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BWAPI.NET
 {
@@ -32,7 +31,7 @@ namespace BWAPI.NET
     /// However for units that were owned by the player, {@link #getPlayer} and {@link #getType} will continue to work for units
     /// that have been destroyed.
     /// </summary>
-    public class Unit : IEquatable<Unit>, IComparable<Unit>
+    public sealed class Unit : IEquatable<Unit>, IComparable<Unit>
     {
         private static readonly HashSet<Order> gatheringGasOrders = new HashSet<Order>() { Order.Harvest1, Order.Harvest2, Order.MoveToGas, Order.WaitForGas, Order.HarvestGas, Order.ReturnGas, Order.ResetCollision };
         private static readonly HashSet<Order> gatheringMineralOrders = new HashSet<Order>() { Order.Harvest1, Order.Harvest2, Order.MoveToMinerals, Order.WaitForMinerals, Order.MiningMinerals, Order.ReturnMinerals, Order.ResetCollision };
@@ -55,16 +54,11 @@ namespace BWAPI.NET
         private UnitCommand _lastCommand;
 
         // Don't make non-latcom users pay for latcom in memory usage
-        private UnitSelf _self = null;
+        private UnitSelf _self;
 
         public UnitSelf Self()
         {
-            if (_self == null)
-            {
-                _self = new UnitSelf();
-            }
-
-            return _self;
+            return _self ??= new UnitSelf();
         }
 
         public Unit(int id, ClientData.UnitData unitData, Game game)
@@ -73,13 +67,13 @@ namespace BWAPI.NET
             _unitData = unitData;
             _game = game;
 
-            UpdatePosition(0);
-
             _initialType = GetUnitType();
             _initialResources = GetResources();
             _initialHitPoints = GetHitPoints();
             _initialPosition = GetPosition();
             _initialTilePosition = GetTilePosition();
+
+            UpdatePosition(0);
         }
 
         private static bool ReallyGatheringGas(Unit targ, Player player)
@@ -153,9 +147,9 @@ namespace BWAPI.NET
         /// <remarks>@see#getInitialType</remarks>
         public UnitType GetUnitType()
         {
-            if (_game.IsLatComEnabled() && Self().type.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().Type.Valid(_game.GetFrameCount()))
             {
-                return Self().type.Get();
+                return Self().Type.Get();
             }
 
             return _unitData.GetUnitType();
@@ -327,9 +321,9 @@ namespace BWAPI.NET
         public int GetHitPoints()
         {
             int hitpoints = _unitData.GetHitPoints();
-            if (_game.IsLatComEnabled() && Self().hitPoints.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().HitPoints.Valid(_game.GetFrameCount()))
             {
-                return hitpoints + Self().hitPoints.Get();
+                return hitpoints + Self().HitPoints.Get();
             }
 
             return hitpoints;
@@ -358,9 +352,9 @@ namespace BWAPI.NET
         public int GetEnergy()
         {
             int energy = _unitData.GetEnergy();
-            if (_game.IsLatComEnabled() && Self().energy.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().Energy.Valid(_game.GetFrameCount()))
             {
-                return energy + Self().energy.Get();
+                return energy + Self().Energy.Get();
             }
 
             return energy;
@@ -406,7 +400,7 @@ namespace BWAPI.NET
         public int GetDistance(Position target)
         {
             // If this unit does not exist or target is invalid
-            if (!Exists() || target == null)
+            if (!Exists())
             {
                 return int.MaxValue;
             }
@@ -841,9 +835,9 @@ namespace BWAPI.NET
         /// <remarks>@see#isPlagued</remarks>
         public int GetStimTimer()
         {
-            if (_game.IsLatComEnabled() && Self().stimTimer.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().StimTimer.Valid(_game.GetFrameCount()))
             {
-                return Self().stimTimer.Get();
+                return Self().StimTimer.Get();
             }
 
             return _unitData.GetStimTimer();
@@ -858,9 +852,9 @@ namespace BWAPI.NET
         /// incomplete unit will be when completed.</returns>
         public UnitType GetBuildType()
         {
-            if (_game.IsLatComEnabled() && Self().buildType.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().BuildType.Valid(_game.GetFrameCount()))
             {
-                return Self().buildType.Get();
+                return Self().BuildType.Get();
             }
 
             return _unitData.GetBuildType();
@@ -889,9 +883,9 @@ namespace BWAPI.NET
         /// </summary>
         public UnitType GetTrainingQueueAt(int i)
         {
-            if (_game.IsLatComEnabled() && Self().trainingQueue[i].Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().TrainingQueue[i].Valid(_game.GetFrameCount()))
             {
-                return Self().trainingQueue[i].Get();
+                return Self().TrainingQueue[i].Get();
             }
 
             return (UnitType)_unitData.GetTrainingQueue(i);
@@ -906,9 +900,9 @@ namespace BWAPI.NET
         public int GetTrainingQueueCount()
         {
             int count = _unitData.GetTrainingQueueCount();
-            if (_game.IsLatComEnabled() && Self().trainingQueueCount.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().TrainingQueueCount.Valid(_game.GetFrameCount()))
             {
-                return count + Self().trainingQueueCount.Get();
+                return count + Self().TrainingQueueCount.Get();
             }
 
             return count;
@@ -927,9 +921,9 @@ namespace BWAPI.NET
         /// </remarks>
         public TechType GetTech()
         {
-            if (_game.IsLatComEnabled() && Self().tech.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().Tech.Valid(_game.GetFrameCount()))
             {
-                return Self().tech.Get();
+                return Self().Tech.Get();
             }
 
             return (TechType)_unitData.GetTech();
@@ -948,9 +942,9 @@ namespace BWAPI.NET
         /// </remarks>
         public UpgradeType GetUpgrade()
         {
-            if (_game.IsLatComEnabled() && Self().upgrade.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().Upgrade.Valid(_game.GetFrameCount()))
             {
-                return Self().upgrade.Get();
+                return Self().Upgrade.Get();
             }
 
             return (UpgradeType)_unitData.GetUpgrade();
@@ -963,9 +957,9 @@ namespace BWAPI.NET
         /// <returns>Number of frames remaining until the unit's completion.</returns>
         public int GetRemainingBuildTime()
         {
-            if (_game.IsLatComEnabled() && Self().remainingBuildTime.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().RemainingBuildTime.Valid(_game.GetFrameCount()))
             {
-                return Self().remainingBuildTime.Get();
+                return Self().RemainingBuildTime.Get();
             }
 
             return _unitData.GetRemainingBuildTime();
@@ -986,9 +980,9 @@ namespace BWAPI.NET
         /// <remarks>@see#getTrainingQueue</remarks>
         public int GetRemainingTrainTime()
         {
-            if (_game.IsLatComEnabled() && Self().remainingTrainTime.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().RemainingTrainTime.Valid(_game.GetFrameCount()))
             {
-                return Self().remainingTrainTime.Get();
+                return Self().RemainingTrainTime.Get();
             }
 
             return _unitData.GetRemainingTrainTime();
@@ -1009,9 +1003,9 @@ namespace BWAPI.NET
         /// </remarks>
         public int GetRemainingResearchTime()
         {
-            if (_game.IsLatComEnabled() && Self().remainingResearchTime.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().RemainingResearchTime.Valid(_game.GetFrameCount()))
             {
-                return Self().remainingResearchTime.Get();
+                return Self().RemainingResearchTime.Get();
             }
 
             return _unitData.GetRemainingResearchTime();
@@ -1030,9 +1024,9 @@ namespace BWAPI.NET
         /// </remarks>
         public int GetRemainingUpgradeTime()
         {
-            if (_game.IsLatComEnabled() && Self().remainingUpgradeTime.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().RemainingUpgradeTime.Valid(_game.GetFrameCount()))
             {
-                return Self().remainingUpgradeTime.Get();
+                return Self().RemainingUpgradeTime.Get();
             }
 
             return _unitData.GetRemainingUpgradeTime();
@@ -1054,9 +1048,9 @@ namespace BWAPI.NET
         /// another unit.</returns>
         public Unit GetBuildUnit()
         {
-            if (_game.IsLatComEnabled() && Self().buildUnit.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().BuildUnit.Valid(_game.GetFrameCount()))
             {
-                return _game.GetUnit(Self().buildUnit.Get());
+                return _game.GetUnit(Self().BuildUnit.Get());
             }
 
             return _game.GetUnit(_unitData.GetBuildUnit());
@@ -1071,9 +1065,9 @@ namespace BWAPI.NET
         /// <remarks>@see#getOrderTarget</remarks>
         public Unit GetTarget()
         {
-            if (_game.IsLatComEnabled() && Self().target.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().Target.Valid(_game.GetFrameCount()))
             {
-                return _game.GetUnit(Self().target.Get());
+                return _game.GetUnit(Self().Target.Get());
             }
 
             return _game.GetUnit(_unitData.GetTarget());
@@ -1086,9 +1080,9 @@ namespace BWAPI.NET
         /// <returns>Target position of a movement action.</returns>
         public Position GetTargetPosition()
         {
-            if (_game.IsLatComEnabled() && Self().targetPositionX.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().TargetPositionX.Valid(_game.GetFrameCount()))
             {
-                return new Position(Self().targetPositionX.Get(), Self().targetPositionY.Get());
+                return new Position(Self().TargetPositionX.Get(), Self().TargetPositionY.Get());
             }
 
             return new Position(_unitData.GetTargetPositionX(), _unitData.GetTargetPositionY());
@@ -1101,9 +1095,9 @@ namespace BWAPI.NET
         /// <returns>The primary {@link Order} that the unit is executing.</returns>
         public Order GetOrder()
         {
-            if (_game.IsLatComEnabled() && Self().order.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().Order.Valid(_game.GetFrameCount()))
             {
-                return Self().order.Get();
+                return Self().Order.Get();
             }
 
             return (Order)_unitData.GetOrder();
@@ -1117,9 +1111,9 @@ namespace BWAPI.NET
         /// <returns>The secondary {@link Order} that the unit is executing.</returns>
         public Order GetSecondaryOrder()
         {
-            if (_game.IsLatComEnabled() && Self().secondaryOrder.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().SecondaryOrder.Valid(_game.GetFrameCount()))
             {
-                return Self().secondaryOrder.Get();
+                return Self().SecondaryOrder.Get();
             }
 
             return (Order)_unitData.GetSecondaryOrder();
@@ -1138,9 +1132,9 @@ namespace BWAPI.NET
         /// </remarks>
         public Unit GetOrderTarget()
         {
-            if (_game.IsLatComEnabled() && Self().orderTarget.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().OrderTarget.Valid(_game.GetFrameCount()))
             {
-                return _game.GetUnit(Self().orderTarget.Get());
+                return _game.GetUnit(Self().OrderTarget.Get());
             }
 
             return _game.GetUnit(_unitData.GetOrderTarget());
@@ -1158,9 +1152,9 @@ namespace BWAPI.NET
         /// </remarks>
         public Position GetOrderTargetPosition()
         {
-            if (_game.IsLatComEnabled() && Self().orderTargetPositionX.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().OrderTargetPositionX.Valid(_game.GetFrameCount()))
             {
-                return new Position(Self().orderTargetPositionX.Get(), Self().orderTargetPositionY.Get());
+                return new Position(Self().OrderTargetPositionX.Get(), Self().OrderTargetPositionY.Get());
             }
 
             return new Position(_unitData.GetOrderTargetPositionX(), _unitData.GetOrderTargetPositionY());
@@ -1180,9 +1174,9 @@ namespace BWAPI.NET
         /// </remarks>
         public Position GetRallyPosition()
         {
-            if (_game.IsLatComEnabled() && Self().rallyPositionX.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().RallyPositionX.Valid(_game.GetFrameCount()))
             {
-                return new Position(Self().rallyPositionX.Get(), Self().rallyPositionY.Get());
+                return new Position(Self().RallyPositionX.Get(), Self().RallyPositionY.Get());
             }
 
             return new Position(_unitData.GetRallyPositionX(), _unitData.GetRallyPositionY());
@@ -1203,9 +1197,9 @@ namespace BWAPI.NET
         /// </remarks>
         public Unit GetRallyUnit()
         {
-            if (_game.IsLatComEnabled() && Self().rallyUnit.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().RallyUnit.Valid(_game.GetFrameCount()))
             {
-                return _game.GetUnit(Self().rallyUnit.Get());
+                return _game.GetUnit(Self().RallyUnit.Get());
             }
 
             return _game.GetUnit(_unitData.GetRallyUnit());
@@ -1608,9 +1602,9 @@ namespace BWAPI.NET
         /// <returns>true if this unit is completed, and false if it is under construction or inaccessible.</returns>
         public bool IsCompleted()
         {
-            if (_game.IsLatComEnabled() && Self().isCompleted.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().IsCompleted.Valid(_game.GetFrameCount()))
             {
-                return Self().isCompleted.Get();
+                return Self().IsCompleted.Get();
             }
 
             return _unitData.IsCompleted();
@@ -1629,9 +1623,9 @@ namespace BWAPI.NET
         /// </remarks>
         public bool IsConstructing()
         {
-            if (_game.IsLatComEnabled() && Self().isConstructing.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().IsConstructing.Valid(_game.GetFrameCount()))
             {
-                return Self().isConstructing.Get();
+                return Self().IsConstructing.Get();
             }
 
             return _unitData.IsConstructing();
@@ -1698,9 +1692,9 @@ namespace BWAPI.NET
 
         bool IsGathering()
         {
-            if (_game.IsLatComEnabled() && Self().isGathering.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().IsGathering.Valid(_game.GetFrameCount()))
             {
-                return Self().isGathering.Get();
+                return Self().IsGathering.Get();
             }
 
             return _unitData.IsGathering();
@@ -1836,9 +1830,9 @@ namespace BWAPI.NET
         /// <remarks>@seeUnit#stop</remarks>
         public bool IsIdle()
         {
-            if (_game.IsLatComEnabled() && Self().isIdle.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().IsIdle.Valid(_game.GetFrameCount()))
             {
-                return Self().isIdle.Get();
+                return Self().IsIdle.Get();
             }
 
             return _unitData.IsIdle();
@@ -1973,9 +1967,9 @@ namespace BWAPI.NET
         /// </remarks>
         public bool IsMorphing()
         {
-            if (_game.IsLatComEnabled() && Self().isMorphing.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().IsMorphing.Valid(_game.GetFrameCount()))
             {
-                return Self().isMorphing.Get();
+                return Self().IsMorphing.Get();
             }
 
             return _unitData.IsMorphing();
@@ -1988,9 +1982,9 @@ namespace BWAPI.NET
         /// <remarks>@see#stop</remarks>
         public bool IsMoving()
         {
-            if (_game.IsLatComEnabled() && Self().isMoving.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().IsMoving.Valid(_game.GetFrameCount()))
             {
-                return Self().isMoving.Get();
+                return Self().IsMoving.Get();
             }
 
             return _unitData.IsMoving();
@@ -2144,9 +2138,9 @@ namespace BWAPI.NET
         /// </remarks>
         public bool IsTraining()
         {
-            if (_game.IsLatComEnabled() && Self().isTraining.Valid(_game.GetFrameCount()))
+            if (_game.IsLatComEnabled() && Self().IsTraining.Valid(_game.GetFrameCount()))
             {
-                return Self().isTraining.Get();
+                return Self().IsTraining.Get();
             }
 
             return _unitData.IsTraining();
@@ -2499,14 +2493,18 @@ namespace BWAPI.NET
             return IssueCommand(UnitCommand.SetRallyPoint(this, target));
         }
 
+        /// <summary>
+        /// Orders the unit to set its rally position to the specified unit.
+        /// </summary>
+        /// <param name="target">The target unit that this structure will rally completed units to.</param>
+        /// <returns>true if the command was passed to Broodwar, and false if BWAPI determined that the command would fail.</returns>
+        /// <remarks>
+        /// There is a small chance for a command to fail after it has been passed to Broodwar.
+        /// <see cref="GetRallyPosition"/>, <see cref="GetRallyUnit"/>, <see cref="CanSetRallyPoint"/>, <see cref="CanSetRallyPosition"/>, <see cref="CanSetRallyUnit"/>
+        /// </remarks>
         public bool SetRallyPoint(Unit target)
         {
             return IssueCommand(UnitCommand.SetRallyPoint(this, target));
-        }
-
-        public bool Move(Position target)
-        {
-            return IssueCommand(UnitCommand.Move(this, target));
         }
 
         /// <summary>
@@ -2521,7 +2519,7 @@ namespace BWAPI.NET
         /// @see#isMoving
         /// @see#canMove
         /// </remarks>
-        public bool Move(Position target, bool shiftQueueCommand)
+        public bool Move(Position target, bool shiftQueueCommand = false)
         {
             return IssueCommand(UnitCommand.Move(this, target, shiftQueueCommand));
         }
@@ -3191,99 +3189,54 @@ namespace BWAPI.NET
                 return false;
             }
 
-            switch (ct)
+            return ct switch
             {
-                case UnitCommandType.Attack_Move:
-                    return true;
-                case UnitCommandType.Attack_Unit:
-                    return CanAttackUnit(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Build:
-                    return CanBuild(command.GetUnitType(), new TilePosition(command._x, command._y), checkCanBuildUnitType, false, false);
-                case UnitCommandType.Build_Addon:
-                    return CanBuildAddon(command.GetUnitType(), false, false);
-                case UnitCommandType.Train:
-                    return CanTrain(command.GetUnitType(), false, false);
-                case UnitCommandType.Morph:
-                    return CanMorph(command.GetUnitType(), false, false);
-                case UnitCommandType.Research:
-                    return _game.CanResearch(command.GetTechType(), this, false);
-                case UnitCommandType.Upgrade:
-                    return _game.CanUpgrade(command.GetUpgradeType(), this, false);
-                case UnitCommandType.Set_Rally_Position:
-                    return true;
-                case UnitCommandType.Set_Rally_Unit:
-                    return CanSetRallyUnit(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Move:
-                    return true;
-                case UnitCommandType.Patrol:
-                    return true;
-                case UnitCommandType.Hold_Position:
-                    return true;
-                case UnitCommandType.Stop:
-                    return true;
-                case UnitCommandType.Follow:
-                    return CanFollow(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Gather:
-                    return CanGather(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Return_Cargo:
-                    return true;
-                case UnitCommandType.Repair:
-                    return CanRepair(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Burrow:
-                    return true;
-                case UnitCommandType.Unburrow:
-                    return true;
-                case UnitCommandType.Cloak:
-                    return true;
-                case UnitCommandType.Decloak:
-                    return true;
-                case UnitCommandType.Siege:
-                    return true;
-                case UnitCommandType.Unsiege:
-                    return true;
-                case UnitCommandType.Lift:
-                    return true;
-                case UnitCommandType.Land:
-                    return CanLand(new TilePosition(command._x, command._y), false, false);
-                case UnitCommandType.Load:
-                    return CanLoad(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Unload:
-                    return CanUnload(command._target, checkCanTargetUnit, false, false, false);
-                case UnitCommandType.Unload_All:
-                    return true;
-                case UnitCommandType.Unload_All_Position:
-                    return CanUnloadAllPosition(command.GetTargetPosition(), false, false);
-                case UnitCommandType.Right_Click_Position:
-                    return true;
-                case UnitCommandType.Right_Click_Unit:
-                    return CanRightClickUnit(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Halt_Construction:
-                    return true;
-                case UnitCommandType.Cancel_Construction:
-                    return true;
-                case UnitCommandType.Cancel_Addon:
-                    return true;
-                case UnitCommandType.Cancel_Train:
-                    return true;
-                case UnitCommandType.Cancel_Train_Slot:
-                    return CanCancelTrainSlot(command._extra, false, false);
-                case UnitCommandType.Cancel_Morph:
-                    return true;
-                case UnitCommandType.Cancel_Research:
-                    return true;
-                case UnitCommandType.Cancel_Upgrade:
-                    return true;
-                case UnitCommandType.Use_Tech:
-                    return CanUseTechWithoutTarget((TechType)command._extra, false, false);
-                case UnitCommandType.Use_Tech_Unit:
-                    return CanUseTechUnit((TechType)command._extra, command._target, checkCanTargetUnit, checkCanUseTechUnitOnUnits, false, false);
-                case UnitCommandType.Use_Tech_Position:
-                    return CanUseTechPosition((TechType)command._extra, command.GetTargetPosition(), checkCanUseTechPositionOnPositions, false, false);
-                case UnitCommandType.Place_COP:
-                    return CanPlaceCOP(new TilePosition(command._x, command._y), false, false);
-            }
-
-            return true;
+                UnitCommandType.Attack_Move => true,
+                UnitCommandType.Attack_Unit => CanAttackUnit(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Build => CanBuild(command.GetUnitType(), new TilePosition(command._x, command._y), checkCanBuildUnitType, false, false),
+                UnitCommandType.Build_Addon => CanBuildAddon(command.GetUnitType(), false, false),
+                UnitCommandType.Train => CanTrain(command.GetUnitType(), false, false),
+                UnitCommandType.Morph => CanMorph(command.GetUnitType(), false, false),
+                UnitCommandType.Research => _game.CanResearch(command.GetTechType(), this, false),
+                UnitCommandType.Upgrade => _game.CanUpgrade(command.GetUpgradeType(), this, false),
+                UnitCommandType.Set_Rally_Position => true,
+                UnitCommandType.Set_Rally_Unit => CanSetRallyUnit(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Move => true,
+                UnitCommandType.Patrol => true,
+                UnitCommandType.Hold_Position => true,
+                UnitCommandType.Stop => true,
+                UnitCommandType.Follow => CanFollow(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Gather => CanGather(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Return_Cargo => true,
+                UnitCommandType.Repair => CanRepair(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Burrow => true,
+                UnitCommandType.Unburrow => true,
+                UnitCommandType.Cloak => true,
+                UnitCommandType.Decloak => true,
+                UnitCommandType.Siege => true,
+                UnitCommandType.Unsiege => true,
+                UnitCommandType.Lift => true,
+                UnitCommandType.Land => CanLand(new TilePosition(command._x, command._y), false, false),
+                UnitCommandType.Load => CanLoad(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Unload => CanUnload(command._target, checkCanTargetUnit, false, false, false),
+                UnitCommandType.Unload_All => true,
+                UnitCommandType.Unload_All_Position => CanUnloadAllPosition(command.GetTargetPosition(), false, false),
+                UnitCommandType.Right_Click_Position => true,
+                UnitCommandType.Right_Click_Unit => CanRightClickUnit(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Halt_Construction => true,
+                UnitCommandType.Cancel_Construction => true,
+                UnitCommandType.Cancel_Addon => true,
+                UnitCommandType.Cancel_Train => true,
+                UnitCommandType.Cancel_Train_Slot => CanCancelTrainSlot(command._extra, false, false),
+                UnitCommandType.Cancel_Morph => true,
+                UnitCommandType.Cancel_Research => true,
+                UnitCommandType.Cancel_Upgrade => true,
+                UnitCommandType.Use_Tech => CanUseTechWithoutTarget((TechType)command._extra, false, false),
+                UnitCommandType.Use_Tech_Unit => CanUseTechUnit((TechType)command._extra, command._target, checkCanTargetUnit, checkCanUseTechUnitOnUnits, false, false),
+                UnitCommandType.Use_Tech_Position => CanUseTechPosition((TechType)command._extra, command.GetTargetPosition(), checkCanUseTechPositionOnPositions, false, false),
+                UnitCommandType.Place_COP => CanPlaceCOP(new TilePosition(command._x, command._y), false, false),
+                _ => true,
+            };
         }
 
         public bool CanIssueCommandGrouped(UnitCommand command, bool checkCanUseTechPositionOnPositions, bool checkCanUseTechUnitOnUnits, bool checkCanTargetUnit, bool checkCanIssueCommandType, bool checkCommandibilityGrouped)
@@ -3363,99 +3316,54 @@ namespace BWAPI.NET
                 return false;
             }
 
-            switch (ct)
+            return ct switch
             {
-                case UnitCommandType.Attack_Move:
-                    return true;
-                case UnitCommandType.Attack_Unit:
-                    return CanAttackUnitGrouped(command._target, checkCanTargetUnit, false, false, false);
-                case UnitCommandType.Build:
-                    return false;
-                case UnitCommandType.Build_Addon:
-                    return false;
-                case UnitCommandType.Train:
-                    return CanTrain(command.GetUnitType(), false, false);
-                case UnitCommandType.Morph:
-                    return CanMorph(command.GetUnitType(), false, false);
-                case UnitCommandType.Research:
-                    return false;
-                case UnitCommandType.Upgrade:
-                    return false;
-                case UnitCommandType.Set_Rally_Position:
-                    return false;
-                case UnitCommandType.Set_Rally_Unit:
-                    return false;
-                case UnitCommandType.Move:
-                    return true;
-                case UnitCommandType.Patrol:
-                    return true;
-                case UnitCommandType.Hold_Position:
-                    return true;
-                case UnitCommandType.Stop:
-                    return true;
-                case UnitCommandType.Follow:
-                    return CanFollow(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Gather:
-                    return CanGather(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Return_Cargo:
-                    return true;
-                case UnitCommandType.Repair:
-                    return CanRepair(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Burrow:
-                    return true;
-                case UnitCommandType.Unburrow:
-                    return true;
-                case UnitCommandType.Cloak:
-                    return true;
-                case UnitCommandType.Decloak:
-                    return true;
-                case UnitCommandType.Siege:
-                    return true;
-                case UnitCommandType.Unsiege:
-                    return true;
-                case UnitCommandType.Lift:
-                    return false;
-                case UnitCommandType.Land:
-                    return false;
-                case UnitCommandType.Load:
-                    return CanLoad(command._target, checkCanTargetUnit, false, false);
-                case UnitCommandType.Unload:
-                    return false;
-                case UnitCommandType.Unload_All:
-                    return false;
-                case UnitCommandType.Unload_All_Position:
-                    return CanUnloadAllPosition(command.GetTargetPosition(), false, false);
-                case UnitCommandType.Right_Click_Position:
-                    return true;
-                case UnitCommandType.Right_Click_Unit:
-                    return CanRightClickUnitGrouped(command._target, checkCanTargetUnit, false, false, false);
-                case UnitCommandType.Halt_Construction:
-                    return true;
-                case UnitCommandType.Cancel_Construction:
-                    return false;
-                case UnitCommandType.Cancel_Addon:
-                    return false;
-                case UnitCommandType.Cancel_Train:
-                    return false;
-                case UnitCommandType.Cancel_Train_Slot:
-                    return false;
-                case UnitCommandType.Cancel_Morph:
-                    return true;
-                case UnitCommandType.Cancel_Research:
-                    return false;
-                case UnitCommandType.Cancel_Upgrade:
-                    return false;
-                case UnitCommandType.Use_Tech:
-                    return CanUseTechWithoutTarget((TechType)command._extra, false, false);
-                case UnitCommandType.Use_Tech_Unit:
-                    return CanUseTechUnit((TechType)command._extra, command._target, checkCanTargetUnit, checkCanUseTechUnitOnUnits, false, false);
-                case UnitCommandType.Use_Tech_Position:
-                    return CanUseTechPosition((TechType)command._extra, command.GetTargetPosition(), checkCanUseTechPositionOnPositions, false, false);
-                case UnitCommandType.Place_COP:
-                    return false;
-            }
-
-            return true;
+                UnitCommandType.Attack_Move => true,
+                UnitCommandType.Attack_Unit => CanAttackUnitGrouped(command._target, checkCanTargetUnit, false, false, false),
+                UnitCommandType.Build => false,
+                UnitCommandType.Build_Addon => false,
+                UnitCommandType.Train => CanTrain(command.GetUnitType(), false, false),
+                UnitCommandType.Morph => CanMorph(command.GetUnitType(), false, false),
+                UnitCommandType.Research => false,
+                UnitCommandType.Upgrade => false,
+                UnitCommandType.Set_Rally_Position => false,
+                UnitCommandType.Set_Rally_Unit => false,
+                UnitCommandType.Move => true,
+                UnitCommandType.Patrol => true,
+                UnitCommandType.Hold_Position => true,
+                UnitCommandType.Stop => true,
+                UnitCommandType.Follow => CanFollow(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Gather => CanGather(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Return_Cargo => true,
+                UnitCommandType.Repair => CanRepair(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Burrow => true,
+                UnitCommandType.Unburrow => true,
+                UnitCommandType.Cloak => true,
+                UnitCommandType.Decloak => true,
+                UnitCommandType.Siege => true,
+                UnitCommandType.Unsiege => true,
+                UnitCommandType.Lift => false,
+                UnitCommandType.Land => false,
+                UnitCommandType.Load => CanLoad(command._target, checkCanTargetUnit, false, false),
+                UnitCommandType.Unload => false,
+                UnitCommandType.Unload_All => false,
+                UnitCommandType.Unload_All_Position => CanUnloadAllPosition(command.GetTargetPosition(), false, false),
+                UnitCommandType.Right_Click_Position => true,
+                UnitCommandType.Right_Click_Unit => CanRightClickUnitGrouped(command._target, checkCanTargetUnit, false, false, false),
+                UnitCommandType.Halt_Construction => true,
+                UnitCommandType.Cancel_Construction => false,
+                UnitCommandType.Cancel_Addon => false,
+                UnitCommandType.Cancel_Train => false,
+                UnitCommandType.Cancel_Train_Slot => false,
+                UnitCommandType.Cancel_Morph => true,
+                UnitCommandType.Cancel_Research => false,
+                UnitCommandType.Cancel_Upgrade => false,
+                UnitCommandType.Use_Tech => CanUseTechWithoutTarget((TechType)command._extra, false, false),
+                UnitCommandType.Use_Tech_Unit => CanUseTechUnit((TechType)command._extra, command._target, checkCanTargetUnit, checkCanUseTechUnitOnUnits, false, false),
+                UnitCommandType.Use_Tech_Position => CanUseTechPosition((TechType)command._extra, command.GetTargetPosition(), checkCanUseTechPositionOnPositions, false, false),
+                UnitCommandType.Place_COP => false,
+                _ => true,
+            };
         }
 
         /// <summary>
@@ -3867,7 +3775,9 @@ namespace BWAPI.NET
         /// @seeUnit#canAttackMove
         /// @seeUnit#canAttackUnit
         /// </remarks>
+        #pragma warning disable IDE0060
         public bool CanAttack(Position target, bool checkCanTargetUnit, bool checkCanIssueCommandType, bool checkCommandibility)
+        #pragma warning restore IDE0060
         {
             if (checkCommandibility && !CanCommand())
             {
@@ -3965,7 +3875,9 @@ namespace BWAPI.NET
         /// @seeUnit#canIssueCommandGrouped
         /// @seeUnit#canAttack
         /// </remarks>
+        #pragma warning disable IDE0060
         public bool CanAttackGrouped(Position target, bool checkCanTargetUnit, bool checkCanIssueCommandType, bool checkCommandibilityGrouped, bool checkCommandibility)
+        #pragma warning restore IDE0060
         {
             if (checkCommandibility && !CanCommand())
             {
@@ -4916,7 +4828,9 @@ namespace BWAPI.NET
         /// @seeUnit#canSetRallyPosition
         /// @seeUnit#canSetRallyUnit
         /// </remarks>
+        #pragma warning disable IDE0060
         public bool CanSetRallyPoint(Position target, bool checkCanTargetUnit, bool checkCanIssueCommandType, bool checkCommandibility)
+        #pragma warning restore IDE0060
         {
             if (checkCommandibility && !CanCommand())
             {
@@ -6245,7 +6159,9 @@ namespace BWAPI.NET
         /// @seeUnit#canRightClickPosition
         /// @seeUnit#canRightClickUnit
         /// </remarks>
+#pragma warning disable IDE0060
         public bool CanRightClick(Position target, bool checkCanTargetUnit, bool checkCanIssueCommandType, bool checkCommandibility)
+#pragma warning restore IDE0060
         {
             if (checkCommandibility && !CanCommand())
             {
@@ -6343,7 +6259,9 @@ namespace BWAPI.NET
         /// @seeUnit#canIssueCommandGrouped
         /// @seeUnit#canRightClickUnit
         /// </remarks>
+#pragma warning disable IDE0060
         public bool CanRightClickGrouped(Position target, bool checkCanTargetUnit, bool checkCanIssueCommandType, bool checkCommandibilityGrouped, bool checkCommandibility)
+#pragma warning restore IDE0060
         {
             if (checkCommandibility && !CanCommand())
             {
@@ -6963,7 +6881,9 @@ namespace BWAPI.NET
         /// @seeUnit#canUseTechUnit
         /// @seeUnit#canUseTechPosition
         /// </remarks>
+#pragma warning disable IDE0060
         public bool CanUseTech(TechType tech, Position target, bool checkCanTargetUnit, bool checkTargetsType, bool checkCanIssueCommandType, bool checkCommandibility)
+#pragma warning restore IDE0060
         {
             if (checkCommandibility && !CanCommand())
             {

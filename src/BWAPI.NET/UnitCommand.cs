@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BWAPI.NET
 {
@@ -20,13 +17,6 @@ namespace BWAPI.NET
             _type = type;
         }
 
-        private void AssignTarget<T>(Point<T> target)
-            where T : Point<T>
-        {
-            _x = target.x;
-            _y = target.y;
-        }
-
         public static UnitCommand Attack(Unit unit, Position target)
         {
             return Attack(unit, target, false);
@@ -39,75 +29,88 @@ namespace BWAPI.NET
 
         public static UnitCommand Attack(Unit unit, Position target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Attack_Move);
-            c.AssignTarget(target);
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Attack_Move)
+            {
+                _x = target.x,
+                _y = target.y,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand Attack(Unit unit, Unit target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Attack_Unit);
-            c._target = target;
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Attack_Unit)
+            {
+                _target = target,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand Build(Unit unit, TilePosition target, UnitType type)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Build);
-            c.AssignTarget(target);
-            c._extra = (int)type;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Build)
+            {
+                _x = target.x,
+                _y = target.y,
+                _extra = (int)type
+            };
         }
 
         public static UnitCommand BuildAddon(Unit unit, UnitType type)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Build_Addon);
-            c._extra = (int)type;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Build_Addon)
+            {
+                _extra = (int)type
+            };
         }
 
         public static UnitCommand Train(Unit unit, UnitType type)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Train);
-            c._extra = (int)type;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Train)
+            {
+                _extra = (int)type
+            };
         }
 
         public static UnitCommand Morph(Unit unit, UnitType type)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Morph);
-            c._extra = (int)type;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Morph)
+            {
+                _extra = (int)type
+            };
         }
 
         public static UnitCommand Research(Unit unit, TechType tech)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Research);
-            c._extra = (int)tech;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Research)
+            {
+                _extra = (int)tech
+            };
         }
 
         public static UnitCommand Upgrade(Unit unit, UpgradeType upgrade)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Upgrade);
-            c._extra = (int)upgrade;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Upgrade)
+            {
+                _extra = (int)upgrade
+            };
         }
 
         public static UnitCommand SetRallyPoint(Unit unit, Position target)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Set_Rally_Position);
-            c.AssignTarget(target);
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Set_Rally_Position)
+            {
+                _x = target.x,
+                _y = target.y
+            };
         }
 
         public static UnitCommand SetRallyPoint(Unit unit, Unit target)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Set_Rally_Unit);
-            c._target = target;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Set_Rally_Unit)
+            {
+                _target = target
+            };
         }
 
         public static UnitCommand Move(Unit unit, Position target)
@@ -117,10 +120,12 @@ namespace BWAPI.NET
 
         public static UnitCommand Move(Unit unit, Position target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Move);
-            c.AssignTarget(target);
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Move)
+            {
+                _x = target.x,
+                _y = target.y,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand Patrol(Unit unit, Position target)
@@ -130,10 +135,12 @@ namespace BWAPI.NET
 
         public static UnitCommand Patrol(Unit unit, Position target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Patrol);
-            c.AssignTarget(target);
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Patrol)
+            {
+                _x = target.x,
+                _y = target.y,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand HoldPosition(Unit unit)
@@ -143,9 +150,10 @@ namespace BWAPI.NET
 
         public static UnitCommand HoldPosition(Unit unit, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Hold_Position);
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Hold_Position)
+            {
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand Stop(Unit unit)
@@ -155,9 +163,10 @@ namespace BWAPI.NET
 
         public static UnitCommand Stop(Unit unit, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Stop);
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Stop)
+            {
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand Follow(Unit unit, Unit target)
@@ -167,10 +176,11 @@ namespace BWAPI.NET
 
         public static UnitCommand Follow(Unit unit, Unit target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Follow);
-            c._target = target;
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Follow)
+            {
+                _target = target,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand Gather(Unit unit, Unit target)
@@ -180,10 +190,11 @@ namespace BWAPI.NET
 
         public static UnitCommand Gather(Unit unit, Unit target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Gather);
-            c._target = target;
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Gather)
+            {
+                _target = target,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand ReturnCargo(Unit unit)
@@ -193,9 +204,10 @@ namespace BWAPI.NET
 
         public static UnitCommand ReturnCargo(Unit unit, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Return_Cargo);
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Return_Cargo)
+            {
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand Repair(Unit unit, Unit target)
@@ -205,10 +217,11 @@ namespace BWAPI.NET
 
         public static UnitCommand Repair(Unit unit, Unit target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Repair);
-            c._target = target;
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Repair)
+            {
+                _target = target,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand Burrow(Unit unit)
@@ -248,9 +261,11 @@ namespace BWAPI.NET
 
         public static UnitCommand Land(Unit unit, TilePosition target)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Land);
-            c.AssignTarget(target);
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Land)
+            {
+                _x = target.x,
+                _y = target.y
+            };
         }
 
         public static UnitCommand Load(Unit unit, Unit target)
@@ -260,17 +275,19 @@ namespace BWAPI.NET
 
         public static UnitCommand Load(Unit unit, Unit target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Load);
-            c._target = target;
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Load)
+            {
+                _target = target,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand Unload(Unit unit, Unit target)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Unload);
-            c._target = target;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Unload)
+            {
+                _target = target
+            };
         }
 
         public static UnitCommand UnloadAll(Unit unit)
@@ -280,9 +297,10 @@ namespace BWAPI.NET
 
         public static UnitCommand UnloadAll(Unit unit, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Unload_All);
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Unload_All)
+            {
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand UnloadAll(Unit unit, Position target)
@@ -292,10 +310,12 @@ namespace BWAPI.NET
 
         public static UnitCommand UnloadAll(Unit unit, Position target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Unload_All_Position);
-            c.AssignTarget(target);
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Unload_All_Position)
+            {
+                _x = target.x,
+                _y = target.y,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand RightClick(Unit unit, Position target)
@@ -310,18 +330,21 @@ namespace BWAPI.NET
 
         public static UnitCommand RightClick(Unit unit, Position target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Right_Click_Position);
-            c.AssignTarget(target);
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Right_Click_Position)
+            {
+                _x = target.x,
+                _y = target.y,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand RightClick(Unit unit, Unit target, bool shiftQueueCommand)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Right_Click_Unit);
-            c._target = target;
-            c._extra = shiftQueueCommand ? 1 : 0;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Right_Click_Unit)
+            {
+                _target = target,
+                _extra = shiftQueueCommand ? 1 : 0
+            };
         }
 
         public static UnitCommand HaltConstruction(Unit unit)
@@ -346,9 +369,10 @@ namespace BWAPI.NET
 
         public static UnitCommand CancelTrain(Unit unit, int slot)
         {
-            UnitCommand c = new UnitCommand(unit, slot >= 0 ? UnitCommandType.Cancel_Train_Slot : UnitCommandType.Cancel_Train);
-            c._extra = slot;
-            return c;
+            return new UnitCommand(unit, slot >= 0 ? UnitCommandType.Cancel_Train_Slot : UnitCommandType.Cancel_Train)
+            {
+                _extra = slot
+            };
         }
 
         public static UnitCommand CancelMorph(Unit unit)
@@ -368,45 +392,46 @@ namespace BWAPI.NET
 
         public static UnitCommand UseTech(Unit unit, TechType tech)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Use_Tech);
-            c._extra = (int)tech;
-            if (tech == TechType.Burrowing)
+            return new UnitCommand(unit, UnitCommandType.Use_Tech)
             {
-                c._type = unit.IsBurrowed() ? UnitCommandType.Unburrow : UnitCommandType.Burrow;
-            }
-            else if (tech == TechType.Cloaking_Field || tech == TechType.Personnel_Cloaking)
-            {
-                c._type = unit.IsCloaked() ? UnitCommandType.Decloak : UnitCommandType.Cloak;
-            }
-            else if (tech == TechType.Tank_Siege_Mode)
-            {
-                c._type = unit.IsSieged() ? UnitCommandType.Unsiege : UnitCommandType.Siege;
-            }
-
-            return c;
+                _extra = (int)tech,
+                _type = tech switch
+                {
+                    TechType.Burrowing => unit.IsBurrowed() ? UnitCommandType.Unburrow : UnitCommandType.Burrow,
+                    TechType.Cloaking_Field => unit.IsCloaked() ? UnitCommandType.Decloak : UnitCommandType.Cloak,
+                    TechType.Personnel_Cloaking => unit.IsCloaked() ? UnitCommandType.Decloak : UnitCommandType.Cloak,
+                    TechType.Tank_Siege_Mode => unit.IsSieged() ? UnitCommandType.Unsiege : UnitCommandType.Siege,
+                    _ => UnitCommandType.None,
+                }
+            };
         }
 
         public static UnitCommand UseTech(Unit unit, TechType tech, Position target)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Use_Tech_Position);
-            c.AssignTarget(target);
-            c._extra = (int)tech;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Use_Tech_Position)
+            {
+                _x = target.x,
+                _y = target.y,
+                _extra = (int)tech
+            };
         }
 
         public static UnitCommand UseTech(Unit unit, TechType tech, Unit target)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Use_Tech_Unit);
-            c._target = target;
-            c._extra = (int)tech;
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Use_Tech_Unit)
+            {
+                _target = target,
+                _extra = (int)tech
+            };
         }
 
         public static UnitCommand PlaceCOP(Unit unit, TilePosition target)
         {
-            UnitCommand c = new UnitCommand(unit, UnitCommandType.Place_COP);
-            c.AssignTarget(target);
-            return c;
+            return new UnitCommand(unit, UnitCommandType.Place_COP)
+            {
+                _x = target.x,
+                _y = target.y
+            };
         }
 
         public Unit GetUnit()

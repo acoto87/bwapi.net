@@ -21,7 +21,7 @@ namespace BWAPI.NET
             }
 
             // Truncate string if its size equals or exceeds 1024
-            var stringTruncated = str.Length >= MaxStringLength ? str.Substring(0, MaxStringLength - 1) : str;
+            var stringTruncated = str.Length >= MaxStringLength ? str[..(MaxStringLength - 1)] : str;
             gameData.SetStringCount(stringCount + 1);
             gameData.SetStrings(stringCount, stringTruncated);
             return stringCount;

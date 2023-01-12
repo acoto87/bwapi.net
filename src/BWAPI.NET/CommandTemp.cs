@@ -92,10 +92,7 @@ namespace BWAPI.NET
             }
 
             // Get the player (usually the unit's owner)
-            if (_player == null)
-            {
-                _player = unit != null ? unit.GetPlayer() : _game.Self();
-            }
+            _player ??= unit != null ? unit.GetPlayer() : _game.Self();
 
             // Existence test
             if (unit == null || !unit.Exists())
@@ -128,11 +125,11 @@ namespace BWAPI.NET
             {
                 case UnitCommandType.Attack_Move:
                 {
-                    unit.Self().order.Set(Order.AttackMove, frame);
-                    unit.Self().targetPositionX.Set(_command._x, frame);
-                    unit.Self().targetPositionY.Set(_command._y, frame);
-                    unit.Self().orderTargetPositionX.Set(_command._x, frame);
-                    unit.Self().orderTargetPositionY.Set(_command._y, frame);
+                    unit.Self().Order.Set(Order.AttackMove, frame);
+                    unit.Self().TargetPositionX.Set(_command._x, frame);
+                    unit.Self().TargetPositionY.Set(_command._y, frame);
+                    unit.Self().OrderTargetPositionX.Set(_command._x, frame);
+                    unit.Self().OrderTargetPositionY.Set(_command._y, frame);
                     break;
                 }
                 case UnitCommandType.Attack_Unit:
@@ -142,16 +139,16 @@ namespace BWAPI.NET
                         return;
                     }
 
-                    unit.Self().order.Set(Order.AttackUnit, frame);
-                    unit.Self().target.Set(GetUnitID(target), frame);
+                    unit.Self().Order.Set(Order.AttackUnit, frame);
+                    unit.Self().Target.Set(GetUnitID(target), frame);
                     break;
                 }
                 case UnitCommandType.Build:
                 {
-                    unit.Self().order.Set(Order.PlaceBuilding, frame);
-                    unit.Self().isConstructing.Set(true, frame);
-                    unit.Self().isIdle.Set(false, frame);
-                    unit.Self().buildType.Set((UnitType)_command._extra, frame);
+                    unit.Self().Order.Set(Order.PlaceBuilding, frame);
+                    unit.Self().IsConstructing.Set(true, frame);
+                    unit.Self().IsIdle.Set(false, frame);
+                    unit.Self().BuildType.Set((UnitType)_command._extra, frame);
                     break;
                 }
                 case UnitCommandType.Build_Addon:
@@ -167,18 +164,18 @@ namespace BWAPI.NET
                             {
 
                                 // We will pretend the building is busy building, this doesn't
-                                unit.Self().isIdle.Set(false, frame);
-                                unit.Self().order.Set(Order.PlaceAddon, frame);
+                                unit.Self().IsIdle.Set(false, frame);
+                                unit.Self().Order.Set(Order.PlaceAddon, frame);
                             }
 
                             break;
                         }
                         case EventType.Order:
                         {
-                            unit.Self().isConstructing.Set(true, frame);
-                            unit.Self().order.Set(Order.Nothing, frame);
-                            unit.Self().secondaryOrder.Set(Order.BuildAddon, frame);
-                            unit.Self().buildType.Set((UnitType)_command._extra, frame);
+                            unit.Self().IsConstructing.Set(true, frame);
+                            unit.Self().Order.Set(Order.Nothing, frame);
+                            unit.Self().SecondaryOrder.Set(Order.BuildAddon, frame);
+                            unit.Self().BuildType.Set((UnitType)_command._extra, frame);
                             break;
                         }
                     }
@@ -187,7 +184,7 @@ namespace BWAPI.NET
                 }
                 case UnitCommandType.Burrow:
                 {
-                    unit.Self().order.Set(Order.Burrowing, frame);
+                    unit.Self().Order.Set(Order.Burrowing, frame);
                     break;
                 }
                 case UnitCommandType.Cancel_Addon:
@@ -199,16 +196,16 @@ namespace BWAPI.NET
                             var addonType = unit.GetBuildType();
                             _player.Self().minerals.SetOrAdd((int)(addonType.MineralPrice() * 0.75), frame);
                             _player.Self().gas.SetOrAdd((int)(addonType.GasPrice() * 0.75), frame);
-                            unit.Self().buildType.Set(UnitType.None, frame);
+                            unit.Self().BuildType.Set(UnitType.None, frame);
                             break;
                         }
                         case EventType.Order:
                         {
-                            unit.Self().remainingBuildTime.Set(0, frame);
-                            unit.Self().isConstructing.Set(false, frame);
-                            unit.Self().order.Set(Order.Nothing, frame);
-                            unit.Self().isIdle.Set(true, frame);
-                            unit.Self().buildUnit.Set(-1, frame);
+                            unit.Self().RemainingBuildTime.Set(0, frame);
+                            unit.Self().IsConstructing.Set(false, frame);
+                            unit.Self().Order.Set(Order.Nothing, frame);
+                            unit.Self().IsIdle.Set(true, frame);
+                            unit.Self().BuildUnit.Set(-1, frame);
                             break;
                         }
                     }
@@ -226,18 +223,18 @@ namespace BWAPI.NET
                             {
                                 case EventType.Resource:
                                 {
-                                    builder.Self().buildType.Set(UnitType.None, frame);
+                                    builder.Self().BuildType.Set(UnitType.None, frame);
                                     break;
                                 }
                                 case EventType.Order:
                                 {
-                                    builder.Self().isConstructing.Set(false, frame);
-                                    builder.Self().order.Set(Order.ResetCollision, frame);
+                                    builder.Self().IsConstructing.Set(false, frame);
+                                    builder.Self().Order.Set(Order.ResetCollision, frame);
                                     break;
                                 }
                                 case EventType.Finish:
                                 {
-                                    builder.Self().order.Set(Order.PlayerGuard, frame);
+                                    builder.Self().Order.Set(Order.PlayerGuard, frame);
                                     break;
                                 }
                             }
@@ -246,10 +243,10 @@ namespace BWAPI.NET
 
                     if (_eventType == EventType.Resource)
                     {
-                        unit.Self().buildUnit.Set(-1, frame);
+                        unit.Self().BuildUnit.Set(-1, frame);
                         _player.Self().minerals.SetOrAdd((int)(unit.GetUnitType().MineralPrice() * 0.75), frame);
                         _player.Self().gas.SetOrAdd((int)(unit.GetUnitType().GasPrice() * 0.75), frame);
-                        unit.Self().remainingBuildTime.Set(0, frame);
+                        unit.Self().RemainingBuildTime.Set(0, frame);
                     }
 
                     if (unit.GetUnitType().GetRace() == Race.Zerg)
@@ -258,18 +255,18 @@ namespace BWAPI.NET
                         {
                             case EventType.Resource:
                             {
-                                unit.Self().type.Set(unit.GetUnitType().WhatBuilds().GetFirst(), frame);
-                                unit.Self().buildType.Set(UnitType.None, frame);
-                                unit.Self().isMorphing.Set(false, frame);
-                                unit.Self().order.Set(Order.ResetCollision, frame);
-                                unit.Self().isConstructing.Set(false, frame);
+                                unit.Self().Type.Set(unit.GetUnitType().WhatBuilds().GetFirst(), frame);
+                                unit.Self().BuildType.Set(UnitType.None, frame);
+                                unit.Self().IsMorphing.Set(false, frame);
+                                unit.Self().Order.Set(Order.ResetCollision, frame);
+                                unit.Self().IsConstructing.Set(false, frame);
                                 _player.Self().supplyUsed[(int)unit.GetUnitType().GetRace()].SetOrAdd(unit.GetUnitType().SupplyRequired(), frame);
                                 break;
                             }
                             case EventType.Order:
                             {
-                                unit.Self().order.Set(Order.PlayerGuard, frame);
-                                unit.Self().isIdle.Set(true, frame);
+                                unit.Self().Order.Set(Order.PlayerGuard, frame);
+                                unit.Self().IsIdle.Set(true, frame);
                                 break;
                             }
                         }
@@ -298,21 +295,21 @@ namespace BWAPI.NET
 
                             if (newType.IsBuilding() && newType.ProducesCreep())
                             {
-                                unit.Self().order.Set(Order.InitCreepGrowth, frame);
+                                unit.Self().Order.Set(Order.InitCreepGrowth, frame);
                             }
 
                             if (unit.GetUnitType() != UnitType.Zerg_Egg)
                             {
                                 // Issue #781
                                 // https://github.com/bwapi/bwapi/issues/781
-                                unit.Self().type.Set(newType, frame);
+                                unit.Self().Type.Set(newType, frame);
                             }
 
-                            unit.Self().buildType.Set(UnitType.None, frame);
-                            unit.Self().isConstructing.Set(false, frame);
-                            unit.Self().isMorphing.Set(false, frame);
-                            unit.Self().isCompleted.Set(true, frame);
-                            unit.Self().remainingBuildTime.Set(0, frame);
+                            unit.Self().BuildType.Set(UnitType.None, frame);
+                            unit.Self().IsConstructing.Set(false, frame);
+                            unit.Self().IsMorphing.Set(false, frame);
+                            unit.Self().IsCompleted.Set(true, frame);
+                            unit.Self().RemainingBuildTime.Set(0, frame);
                             break;
                         }
                         case EventType.Order:
@@ -321,12 +318,12 @@ namespace BWAPI.NET
                             {
                                 // This event would hopefully not have been created
                                 // if this wasn't true (see event note above)
-                                unit.Self().isIdle.Set(true, frame);
-                                unit.Self().order.Set(Order.Nothing, frame);
+                                unit.Self().IsIdle.Set(true, frame);
+                                unit.Self().Order.Set(Order.Nothing, frame);
                                 if (unit.GetUnitType() == UnitType.Zerg_Hatchery || unit.GetUnitType() == UnitType.Zerg_Lair)
                                 {
                                     // Type should have updated during last event to the cancelled type
-                                    unit.Self().secondaryOrder.Set(Order.SpreadCreep, frame);
+                                    unit.Self().SecondaryOrder.Set(Order.SpreadCreep, frame);
                                 }
                             }
                             else
@@ -343,15 +340,15 @@ namespace BWAPI.NET
                         {
                             if (unit.GetUnitType() == UnitType.Zerg_Hatchery || unit.GetUnitType() == UnitType.Zerg_Lair)
                             {
-                                unit.Self().secondaryOrder.Set(Order.SpawningLarva, frame);
+                                unit.Self().SecondaryOrder.Set(Order.SpawningLarva, frame);
                             }
                             else if (!unit.GetUnitType().IsBuilding())
                             {
-                                unit.Self().order.Set(Order.PlayerGuard, frame);
-                                unit.Self().isCompleted.Set(true, frame);
-                                unit.Self().isConstructing.Set(false, frame);
-                                unit.Self().isIdle.Set(true, frame);
-                                unit.Self().isMorphing.Set(false, frame);
+                                unit.Self().Order.Set(Order.PlayerGuard, frame);
+                                unit.Self().IsCompleted.Set(true, frame);
+                                unit.Self().IsConstructing.Set(false, frame);
+                                unit.Self().IsIdle.Set(true, frame);
+                                unit.Self().IsMorphing.Set(false, frame);
                             }
 
                             break;
@@ -369,14 +366,14 @@ namespace BWAPI.NET
                             var techType = unit.GetTech();
                             _player.Self().minerals.SetOrAdd(techType.MineralPrice(), frame);
                             _player.Self().gas.SetOrAdd(techType.GasPrice(), frame);
-                            unit.Self().remainingResearchTime.Set(0, frame);
-                            unit.Self().tech.Set(TechType.None, frame);
+                            unit.Self().RemainingResearchTime.Set(0, frame);
+                            unit.Self().Tech.Set(TechType.None, frame);
                             break;
                         }
                         case EventType.Order:
                         {
-                            unit.Self().order.Set(Order.Nothing, frame);
-                            unit.Self().isIdle.Set(true, frame);
+                            unit.Self().Order.Set(Order.Nothing, frame);
+                            unit.Self().IsIdle.Set(true, frame);
                             break;
                         }
                     }
@@ -396,10 +393,10 @@ namespace BWAPI.NET
                             // Shift training queue back one slot after the cancelled unit
                             for (var i = _command._extra; i < 4; ++i)
                             {
-                                unit.Self().trainingQueue[i].Set(unit.GetTrainingQueue()[i + 1], frame);
+                                unit.Self().TrainingQueue[i].Set(unit.GetTrainingQueue()[i + 1], frame);
                             }
 
-                            unit.Self().trainingQueueCount.SetOrAdd(-1, frame);
+                            unit.Self().TrainingQueueCount.SetOrAdd(-1, frame);
                         }
                     }
                     else
@@ -411,31 +408,31 @@ namespace BWAPI.NET
                                 var unitType = unit.GetTrainingQueue()[unit.GetTrainingQueueCount() - 1];
                                 _player.Self().minerals.SetOrAdd(unitType.MineralPrice(), frame);
                                 _player.Self().gas.SetOrAdd(unitType.GasPrice(), frame);
-                                unit.Self().buildUnit.Set(-1, frame);
+                                unit.Self().BuildUnit.Set(-1, frame);
                                 if (unit.GetTrainingQueueCount() == 1)
                                 {
-                                    unit.Self().isIdle.Set(false, frame);
-                                    unit.Self().isTraining.Set(false, frame);
+                                    unit.Self().IsIdle.Set(false, frame);
+                                    unit.Self().IsTraining.Set(false, frame);
                                 }
 
                                 break;
                             }
                             case EventType.Order:
                             {
-                                unit.Self().trainingQueueCount.SetOrAdd(-1, frame);
+                                unit.Self().TrainingQueueCount.SetOrAdd(-1, frame);
                                 var unitType = unit.GetTrainingQueue()[unit.GetTrainingQueueCount()];
                                 _player.Self().supplyUsed[(int)unitType.GetRace()].SetOrAdd(-unitType.SupplyRequired(), frame);
                                 if (unit.GetTrainingQueueCount() == 0)
                                 {
-                                    unit.Self().buildType.Set(UnitType.None, frame);
+                                    unit.Self().BuildType.Set(UnitType.None, frame);
                                 }
                                 else
                                 {
                                     var ut = unit.GetTrainingQueue()[unit.GetTrainingQueueCount() - 1];
 
                                     // Actual time decreases, but we'll let it be the buildTime until latency catches up.
-                                    unit.Self().remainingTrainTime.Set(ut.BuildTime(), frame);
-                                    unit.Self().buildType.Set(ut, frame);
+                                    unit.Self().RemainingTrainTime.Set(ut.BuildTime(), frame);
+                                    unit.Self().BuildType.Set(ut, frame);
                                 }
 
                                 break;
@@ -444,7 +441,7 @@ namespace BWAPI.NET
                             {
                                 if (unit.GetBuildType() == UnitType.None)
                                 {
-                                    unit.Self().order.Set(Order.Nothing, frame);
+                                    unit.Self().Order.Set(Order.Nothing, frame);
                                 }
 
                                 break;
@@ -463,31 +460,31 @@ namespace BWAPI.NET
                             var unitType = unit.GetTrainingQueue()[unit.GetTrainingQueueCount() - 1];
                             _player.Self().minerals.SetOrAdd(unitType.MineralPrice(), frame);
                             _player.Self().gas.SetOrAdd(unitType.GasPrice(), frame);
-                            unit.Self().buildUnit.Set(-1, frame);
+                            unit.Self().BuildUnit.Set(-1, frame);
                             if (unit.GetTrainingQueueCount() == 1)
                             {
-                                unit.Self().isIdle.Set(false, frame);
-                                unit.Self().isTraining.Set(false, frame);
+                                unit.Self().IsIdle.Set(false, frame);
+                                unit.Self().IsTraining.Set(false, frame);
                             }
 
                             break;
                         }
                         case EventType.Order:
                         {
-                            unit.Self().trainingQueueCount.SetOrAdd(-1, frame);
+                            unit.Self().TrainingQueueCount.SetOrAdd(-1, frame);
                             var unitType = unit.GetTrainingQueue()[unit.GetTrainingQueueCount()];
                             _player.Self().supplyUsed[(int)unitType.GetRace()].SetOrAdd(-unitType.SupplyRequired(), frame);
                             if (unit.GetTrainingQueueCount() == 0)
                             {
-                                unit.Self().buildType.Set(UnitType.None, frame);
+                                unit.Self().BuildType.Set(UnitType.None, frame);
                             }
                             else
                             {
                                 var ut = unit.GetTrainingQueue()[unit.GetTrainingQueueCount() - 1];
 
                                 // Actual time decreases, but we'll let it be the buildTime until latency catches up.
-                                unit.Self().remainingTrainTime.Set(ut.BuildTime(), frame);
-                                unit.Self().buildType.Set(ut, frame);
+                                unit.Self().RemainingTrainTime.Set(ut.BuildTime(), frame);
+                                unit.Self().BuildType.Set(ut, frame);
                             }
 
                             break;
@@ -496,7 +493,7 @@ namespace BWAPI.NET
                         {
                             if (unit.GetBuildType() == UnitType.None)
                             {
-                                unit.Self().order.Set(Order.Nothing, frame);
+                                unit.Self().Order.Set(Order.Nothing, frame);
                             }
 
                             break;
@@ -515,14 +512,14 @@ namespace BWAPI.NET
                             var nextLevel = unit.GetPlayer().GetUpgradeLevel(upgradeType) + 1;
                             _player.Self().minerals.SetOrAdd(upgradeType.MineralPrice(nextLevel), frame);
                             _player.Self().gas.SetOrAdd(upgradeType.GasPrice(nextLevel), frame);
-                            unit.Self().upgrade.Set(UpgradeType.None, frame);
-                            unit.Self().remainingUpgradeTime.Set(0, frame);
+                            unit.Self().Upgrade.Set(UpgradeType.None, frame);
+                            unit.Self().RemainingUpgradeTime.Set(0, frame);
                             break;
                         }
                         case EventType.Order:
                         {
-                            unit.Self().order.Set(Order.Nothing, frame);
-                            unit.Self().isIdle.Set(true, frame);
+                            unit.Self().Order.Set(Order.Nothing, frame);
+                            unit.Self().IsIdle.Set(true, frame);
                             break;
                         }
                     }
@@ -531,38 +528,38 @@ namespace BWAPI.NET
                 }
                 case UnitCommandType.Cloak:
                 {
-                    unit.Self().order.Set(Order.Cloak, frame);
-                    unit.Self().energy.SetOrAdd(-unit.GetUnitType().CloakingTech().EnergyCost(), frame);
+                    unit.Self().Order.Set(Order.Cloak, frame);
+                    unit.Self().Energy.SetOrAdd(-unit.GetUnitType().CloakingTech().EnergyCost(), frame);
                     break;
                 }
                 case UnitCommandType.Decloak:
                 {
-                    unit.Self().order.Set(Order.Decloak, frame);
+                    unit.Self().Order.Set(Order.Decloak, frame);
                     break;
                 }
                 case UnitCommandType.Follow:
                 {
-                    unit.Self().order.Set(Order.Follow, frame);
-                    unit.Self().target.Set(GetUnitID(target), frame);
-                    unit.Self().isIdle.Set(false, frame);
-                    unit.Self().isMoving.Set(true, frame);
+                    unit.Self().Order.Set(Order.Follow, frame);
+                    unit.Self().Target.Set(GetUnitID(target), frame);
+                    unit.Self().IsIdle.Set(false, frame);
+                    unit.Self().IsMoving.Set(true, frame);
                     break;
                 }
                 case UnitCommandType.Gather:
                 {
-                    unit.Self().target.Set(GetUnitID(target), frame);
-                    unit.Self().isIdle.Set(false, frame);
-                    unit.Self().isMoving.Set(true, frame);
-                    unit.Self().isGathering.Set(true, frame);
+                    unit.Self().Target.Set(GetUnitID(target), frame);
+                    unit.Self().IsIdle.Set(false, frame);
+                    unit.Self().IsMoving.Set(true, frame);
+                    unit.Self().IsGathering.Set(true, frame);
 
                     // @TODO: Fully time and test this order
                     if (target != null && target.Exists() && target.GetUnitType().IsMineralField())
                     {
-                        unit.Self().order.Set(Order.MoveToMinerals, frame);
+                        unit.Self().Order.Set(Order.MoveToMinerals, frame);
                     }
                     else if (target != null && target.Exists() && target.GetUnitType().IsRefinery())
                     {
-                        unit.Self().order.Set(Order.MoveToGas, frame);
+                        unit.Self().Order.Set(Order.MoveToGas, frame);
                     }
 
                     break;
@@ -573,19 +570,22 @@ namespace BWAPI.NET
                     {
                         case EventType.Order:
                             var building = unit.GetBuildUnit();
+
+#pragma warning disable IDE0031
                             if (building != null)
+#pragma warning restore IDE0031
                             {
-                                building.Self().buildUnit.Set(-1, frame);
+                                building.Self().BuildUnit.Set(-1, frame);
                             }
 
-                            unit.Self().buildUnit.Set(-1, frame);
-                            unit.Self().order.Set(Order.ResetCollision, frame);
-                            unit.Self().isConstructing.Set(false, frame);
-                            unit.Self().buildType.Set(UnitType.None, frame);
+                            unit.Self().BuildUnit.Set(-1, frame);
+                            unit.Self().Order.Set(Order.ResetCollision, frame);
+                            unit.Self().IsConstructing.Set(false, frame);
+                            unit.Self().BuildType.Set(UnitType.None, frame);
                             break;
                         case EventType.Finish:
-                            unit.Self().order.Set(Order.PlayerGuard, frame);
-                            unit.Self().isIdle.Set(true, frame);
+                            unit.Self().Order.Set(Order.PlayerGuard, frame);
+                            unit.Self().IsIdle.Set(true, frame);
                             break;
                     }
 
@@ -593,42 +593,42 @@ namespace BWAPI.NET
                 }
                 case UnitCommandType.Hold_Position:
                 {
-                    unit.Self().isMoving.Set(false, frame);
-                    unit.Self().isIdle.Set(false, frame);
-                    unit.Self().order.Set(Order.HoldPosition, frame);
+                    unit.Self().IsMoving.Set(false, frame);
+                    unit.Self().IsIdle.Set(false, frame);
+                    unit.Self().Order.Set(Order.HoldPosition, frame);
                     break;
                 }
                 case UnitCommandType.Land:
                 {
-                    unit.Self().order.Set(Order.BuildingLand, frame);
-                    unit.Self().isIdle.Set(false, frame);
+                    unit.Self().Order.Set(Order.BuildingLand, frame);
+                    unit.Self().IsIdle.Set(false, frame);
                     break;
                 }
                 case UnitCommandType.Lift:
                 {
-                    unit.Self().order.Set(Order.BuildingLiftOff, frame);
-                    unit.Self().isIdle.Set(false, frame);
+                    unit.Self().Order.Set(Order.BuildingLiftOff, frame);
+                    unit.Self().IsIdle.Set(false, frame);
                     break;
                 }
                 case UnitCommandType.Load:
                 {
                     if (unit.GetUnitType() == UnitType.Terran_Bunker)
                     {
-                        unit.Self().order.Set(Order.PickupBunker, frame);
-                        unit.Self().target.Set(GetUnitID(target), frame);
+                        unit.Self().Order.Set(Order.PickupBunker, frame);
+                        unit.Self().Target.Set(GetUnitID(target), frame);
                     }
                     else if (unit.GetUnitType().SpaceProvided() != 0)
                     {
-                        unit.Self().order.Set(Order.PickupTransport, frame);
-                        unit.Self().target.Set(GetUnitID(target), frame);
+                        unit.Self().Order.Set(Order.PickupTransport, frame);
+                        unit.Self().Target.Set(GetUnitID(target), frame);
                     }
                     else if (target != null && target.Exists() && target.GetUnitType().SpaceProvided() != 0)
                     {
-                        unit.Self().order.Set(Order.EnterTransport, frame);
-                        unit.Self().target.Set(GetUnitID(target), frame);
+                        unit.Self().Order.Set(Order.EnterTransport, frame);
+                        unit.Self().Target.Set(GetUnitID(target), frame);
                     }
 
-                    unit.Self().isIdle.Set(false, frame);
+                    unit.Self().IsIdle.Set(false, frame);
                     break;
                 }
                 case UnitCommandType.Morph:
@@ -640,11 +640,11 @@ namespace BWAPI.NET
                         {
                             if (!isCurrentFrame)
                             {
-                                unit.Self().isCompleted.Set(false, frame);
-                                unit.Self().isIdle.Set(false, frame);
-                                unit.Self().isConstructing.Set(true, frame);
-                                unit.Self().isMorphing.Set(true, frame);
-                                unit.Self().buildType.Set(morphType, frame);
+                                unit.Self().IsCompleted.Set(false, frame);
+                                unit.Self().IsIdle.Set(false, frame);
+                                unit.Self().IsConstructing.Set(true, frame);
+                                unit.Self().IsMorphing.Set(true, frame);
+                                unit.Self().BuildType.Set(morphType, frame);
                             }
 
                             if (unit.GetUnitType().IsBuilding())
@@ -653,8 +653,8 @@ namespace BWAPI.NET
                                 {
 
                                     // Actions that don't happen when we're reserving resources
-                                    unit.Self().order.Set(Order.ZergBuildingMorph, frame);
-                                    unit.Self().type.Set(morphType, frame);
+                                    unit.Self().Order.Set(Order.ZergBuildingMorph, frame);
+                                    unit.Self().Type.Set(morphType, frame);
                                 }
 
                                 _player.Self().minerals.SetOrAdd(-morphType.MineralPrice(), frame);
@@ -665,25 +665,25 @@ namespace BWAPI.NET
                                 _player.Self().supplyUsed[(int)morphType.GetRace()].SetOrAdd(morphType.SupplyRequired() * (1 + (morphType.IsTwoUnitsInOneEgg() ? 1 : 0)) - unit.GetUnitType().SupplyRequired(), frame);
                                 if (!isCurrentFrame)
                                 {
-                                    unit.Self().order.Set(Order.ZergUnitMorph, frame);
+                                    unit.Self().Order.Set(Order.ZergUnitMorph, frame);
                                     _player.Self().minerals.SetOrAdd(-morphType.MineralPrice(), frame);
                                     _player.Self().gas.SetOrAdd(-morphType.GasPrice(), frame);
                                     switch (morphType)
                                     {
                                         case UnitType.Zerg_Lurker_Egg:
-                                            unit.Self().type.Set(UnitType.Zerg_Lurker_Egg, frame);
+                                            unit.Self().Type.Set(UnitType.Zerg_Lurker_Egg, frame);
                                             break;
                                         case UnitType.Zerg_Devourer:
                                         case UnitType.Zerg_Guardian:
-                                            unit.Self().type.Set(UnitType.Zerg_Cocoon, frame);
+                                            unit.Self().Type.Set(UnitType.Zerg_Cocoon, frame);
                                             break;
                                         default:
-                                            unit.Self().type.Set(UnitType.Zerg_Egg, frame);
+                                            unit.Self().Type.Set(UnitType.Zerg_Egg, frame);
                                             break;
                                     }
 
-                                    unit.Self().trainingQueue[unit.GetTrainingQueueCount()].Set(morphType, frame);
-                                    unit.Self().trainingQueueCount.SetOrAdd(+1, frame);
+                                    unit.Self().TrainingQueue[unit.GetTrainingQueueCount()].Set(morphType, frame);
+                                    unit.Self().TrainingQueueCount.SetOrAdd(+1, frame);
                                 }
                             }
 
@@ -693,7 +693,7 @@ namespace BWAPI.NET
                         {
                             if (unit.GetUnitType().IsBuilding())
                             {
-                                unit.Self().order.Set(Order.IncompleteBuilding, frame);
+                                unit.Self().Order.Set(Order.IncompleteBuilding, frame);
                             }
 
                             break;
@@ -704,24 +704,24 @@ namespace BWAPI.NET
                 }
                 case UnitCommandType.Move:
                 {
-                    unit.Self().order.Set(Order.Move, frame);
-                    unit.Self().targetPositionX.Set(_command._x, frame);
-                    unit.Self().targetPositionY.Set(_command._y, frame);
-                    unit.Self().orderTargetPositionX.Set(_command._x, frame);
-                    unit.Self().orderTargetPositionY.Set(_command._y, frame);
-                    unit.Self().isMoving.Set(true, frame);
-                    unit.Self().isIdle.Set(false, frame);
+                    unit.Self().Order.Set(Order.Move, frame);
+                    unit.Self().TargetPositionX.Set(_command._x, frame);
+                    unit.Self().TargetPositionY.Set(_command._y, frame);
+                    unit.Self().OrderTargetPositionX.Set(_command._x, frame);
+                    unit.Self().OrderTargetPositionY.Set(_command._y, frame);
+                    unit.Self().IsMoving.Set(true, frame);
+                    unit.Self().IsIdle.Set(false, frame);
                     break;
                 }
                 case UnitCommandType.Patrol:
                 {
-                    unit.Self().order.Set(Order.Patrol, frame);
-                    unit.Self().isIdle.Set(false, frame);
-                    unit.Self().isMoving.Set(true, frame);
-                    unit.Self().targetPositionX.Set(_command._x, frame);
-                    unit.Self().targetPositionY.Set(_command._y, frame);
-                    unit.Self().orderTargetPositionX.Set(_command._x, frame);
-                    unit.Self().orderTargetPositionY.Set(_command._y, frame);
+                    unit.Self().Order.Set(Order.Patrol, frame);
+                    unit.Self().IsIdle.Set(false, frame);
+                    unit.Self().IsMoving.Set(true, frame);
+                    unit.Self().TargetPositionX.Set(_command._x, frame);
+                    unit.Self().TargetPositionY.Set(_command._y, frame);
+                    unit.Self().OrderTargetPositionX.Set(_command._x, frame);
+                    unit.Self().OrderTargetPositionY.Set(_command._y, frame);
                     break;
                 }
                 case UnitCommandType.Repair:
@@ -731,18 +731,18 @@ namespace BWAPI.NET
                         return;
                     }
 
-                    unit.Self().order.Set(Order.Repair, frame);
-                    unit.Self().target.Set(GetUnitID(target), frame);
-                    unit.Self().isIdle.Set(false, frame);
+                    unit.Self().Order.Set(Order.Repair, frame);
+                    unit.Self().Target.Set(GetUnitID(target), frame);
+                    unit.Self().IsIdle.Set(false, frame);
                     break;
                 }
                 case UnitCommandType.Research:
                 {
                     var techType = (TechType)_command._extra;
-                    unit.Self().order.Set(Order.ResearchTech, frame);
-                    unit.Self().tech.Set(techType, frame);
-                    unit.Self().isIdle.Set(false, frame);
-                    unit.Self().remainingResearchTime.Set(techType.ResearchTime(), frame);
+                    unit.Self().Order.Set(Order.ResearchTech, frame);
+                    unit.Self().Tech.Set(techType, frame);
+                    unit.Self().IsIdle.Set(false, frame);
+                    unit.Self().RemainingResearchTime.Set(techType.ResearchTime(), frame);
                     _player.Self().minerals.SetOrAdd(-techType.MineralPrice(), frame);
                     _player.Self().gas.SetOrAdd(-techType.GasPrice(), frame);
                     _player.Self().isResearching[(int)techType].Set(true, frame);
@@ -755,54 +755,54 @@ namespace BWAPI.NET
                         return;
                     }
 
-                    unit.Self().order.Set(unit.IsCarryingGas() ? Order.ReturnGas : Order.ReturnMinerals, frame);
-                    unit.Self().isGathering.Set(true, frame);
-                    unit.Self().isIdle.Set(false, frame);
+                    unit.Self().Order.Set(unit.IsCarryingGas() ? Order.ReturnGas : Order.ReturnMinerals, frame);
+                    unit.Self().IsGathering.Set(true, frame);
+                    unit.Self().IsIdle.Set(false, frame);
                     break;
                 }
                 case UnitCommandType.Right_Click_Position:
                 {
-                    unit.Self().order.Set(Order.Move, frame);
-                    unit.Self().targetPositionX.Set(_command._x, frame);
-                    unit.Self().targetPositionY.Set(_command._y, frame);
-                    unit.Self().orderTargetPositionX.Set(_command._x, frame);
-                    unit.Self().orderTargetPositionY.Set(_command._y, frame);
-                    unit.Self().isMoving.Set(true, frame);
-                    unit.Self().isIdle.Set(false, frame);
+                    unit.Self().Order.Set(Order.Move, frame);
+                    unit.Self().TargetPositionX.Set(_command._x, frame);
+                    unit.Self().TargetPositionY.Set(_command._y, frame);
+                    unit.Self().OrderTargetPositionX.Set(_command._x, frame);
+                    unit.Self().OrderTargetPositionY.Set(_command._y, frame);
+                    unit.Self().IsMoving.Set(true, frame);
+                    unit.Self().IsIdle.Set(false, frame);
                     break;
                 }
                 case UnitCommandType.Right_Click_Unit:
                 {
                     if (target != null && target.Exists())
                     {
-                        unit.Self().target.Set(GetUnitID(target), frame);
-                        unit.Self().isIdle.Set(false, frame);
-                        unit.Self().isMoving.Set(true, frame);
+                        unit.Self().Target.Set(GetUnitID(target), frame);
+                        unit.Self().IsIdle.Set(false, frame);
+                        unit.Self().IsMoving.Set(true, frame);
                         if (unit.GetUnitType().IsWorker() && target.GetUnitType().IsMineralField())
                         {
-                            unit.Self().isGathering.Set(true, frame);
-                            unit.Self().order.Set(Order.MoveToMinerals, frame);
+                            unit.Self().IsGathering.Set(true, frame);
+                            unit.Self().Order.Set(Order.MoveToMinerals, frame);
                         }
                         else if (unit.GetUnitType().IsWorker() && target.GetUnitType().IsRefinery())
                         {
-                            unit.Self().isGathering.Set(true, frame);
-                            unit.Self().order.Set(Order.MoveToGas, frame);
+                            unit.Self().IsGathering.Set(true, frame);
+                            unit.Self().Order.Set(Order.MoveToGas, frame);
                         }
                         else if (unit.GetUnitType().IsWorker() && target.GetUnitType().GetRace() == Race.Terran && target.GetUnitType().WhatBuilds().GetFirst() == unit.GetUnitType() && !target.IsCompleted())
                         {
-                            unit.Self().order.Set(Order.ConstructingBuilding, frame);
-                            unit.Self().buildUnit.Set(GetUnitID(target), frame);
-                            target.Self().buildUnit.Set(GetUnitID(unit), frame);
-                            unit.Self().isConstructing.Set(true, frame);
-                            target.Self().isConstructing.Set(true, frame);
+                            unit.Self().Order.Set(Order.ConstructingBuilding, frame);
+                            unit.Self().BuildUnit.Set(GetUnitID(target), frame);
+                            target.Self().BuildUnit.Set(GetUnitID(unit), frame);
+                            unit.Self().IsConstructing.Set(true, frame);
+                            target.Self().IsConstructing.Set(true, frame);
                         }
                         else if (unit.GetUnitType().CanAttack() && target.GetPlayer() != unit.GetPlayer() && !target.GetUnitType().IsNeutral())
                         {
-                            unit.Self().order.Set(Order.AttackUnit, frame);
+                            unit.Self().Order.Set(Order.AttackUnit, frame);
                         }
                         else if (unit.GetUnitType().CanMove())
                         {
-                            unit.Self().order.Set(Order.Follow, frame);
+                            unit.Self().Order.Set(Order.Follow, frame);
                         }
                     }
 
@@ -815,10 +815,10 @@ namespace BWAPI.NET
                         return;
                     }
 
-                    unit.Self().order.Set(Order.RallyPointTile, frame);
-                    unit.Self().rallyPositionX.Set(_command._x, frame);
-                    unit.Self().rallyPositionY.Set(_command._y, frame);
-                    unit.Self().rallyUnit.Set(-1, frame);
+                    unit.Self().Order.Set(Order.RallyPointTile, frame);
+                    unit.Self().RallyPositionX.Set(_command._x, frame);
+                    unit.Self().RallyPositionY.Set(_command._y, frame);
+                    unit.Self().RallyUnit.Set(-1, frame);
                     break;
                 }
                 case UnitCommandType.Set_Rally_Unit:
@@ -833,19 +833,19 @@ namespace BWAPI.NET
                         return;
                     }
 
-                    unit.Self().order.Set(Order.RallyPointUnit, frame);
-                    unit.Self().rallyUnit.Set(GetUnitID(target), frame);
+                    unit.Self().Order.Set(Order.RallyPointUnit, frame);
+                    unit.Self().RallyUnit.Set(GetUnitID(target), frame);
                     break;
                 }
                 case UnitCommandType.Siege:
                 {
-                    unit.Self().order.Set(Order.Sieging, frame);
+                    unit.Self().Order.Set(Order.Sieging, frame);
                     break;
                 }
                 case UnitCommandType.Stop:
                 {
-                    unit.Self().order.Set(Order.Stop, frame);
-                    unit.Self().isIdle.Set(true, frame);
+                    unit.Self().Order.Set(Order.Stop, frame);
+                    unit.Self().IsIdle.Set(true, frame);
                     break;
                 }
                 case UnitCommandType.Train:
@@ -861,71 +861,71 @@ namespace BWAPI.NET
 
 
                     // Happens on RLF + 1, we want to pretend this happens on RLF.
-                    unit.Self().trainingQueue[unit.GetTrainingQueueCount()].Set(unitType, frame);
-                    unit.Self().trainingQueueCount.SetOrAdd(+1, frame);
+                    unit.Self().TrainingQueue[unit.GetTrainingQueueCount()].Set(unitType, frame);
+                    unit.Self().TrainingQueueCount.SetOrAdd(+1, frame);
                     _player.Self().supplyUsed[(int)unitType.GetRace()].SetOrAdd(unitType.SupplyRequired(), frame);
 
                     // Happens on RLF or RLF + 1, doesn't matter if we do twice
-                    unit.Self().isTraining.Set(true, frame);
-                    unit.Self().isIdle.Set(false, frame);
-                    unit.Self().remainingTrainTime.Set(unitType.BuildTime(), frame);
+                    unit.Self().IsTraining.Set(true, frame);
+                    unit.Self().IsIdle.Set(false, frame);
+                    unit.Self().RemainingTrainTime.Set(unitType.BuildTime(), frame);
                     if (unitType == UnitType.Terran_Nuclear_Missile)
                     {
-                        unit.Self().secondaryOrder.Set(Order.Train, frame);
+                        unit.Self().SecondaryOrder.Set(Order.Train, frame);
                     }
 
                     break;
                 }
                 case UnitCommandType.Unburrow:
                 {
-                    unit.Self().order.Set(Order.Unburrowing, frame);
+                    unit.Self().Order.Set(Order.Unburrowing, frame);
                     break;
                 }
                 case UnitCommandType.Unload:
                 {
-                    unit.Self().order.Set(Order.Unload, frame);
-                    unit.Self().target.Set(GetUnitID(target), frame);
+                    unit.Self().Order.Set(Order.Unload, frame);
+                    unit.Self().Target.Set(GetUnitID(target), frame);
                     break;
                 }
                 case UnitCommandType.Unload_All:
                 {
                     if (unit.GetUnitType() == UnitType.Terran_Bunker)
                     {
-                        unit.Self().order.Set(Order.Unload, frame);
+                        unit.Self().Order.Set(Order.Unload, frame);
                     }
                     else
                     {
-                        unit.Self().order.Set(Order.MoveUnload, frame);
-                        unit.Self().targetPositionX.Set(_command._x, frame);
-                        unit.Self().targetPositionY.Set(_command._y, frame);
-                        unit.Self().orderTargetPositionX.Set(_command._x, frame);
-                        unit.Self().orderTargetPositionY.Set(_command._y, frame);
+                        unit.Self().Order.Set(Order.MoveUnload, frame);
+                        unit.Self().TargetPositionX.Set(_command._x, frame);
+                        unit.Self().TargetPositionY.Set(_command._y, frame);
+                        unit.Self().OrderTargetPositionX.Set(_command._x, frame);
+                        unit.Self().OrderTargetPositionY.Set(_command._y, frame);
                     }
 
                     break;
                 }
                 case UnitCommandType.Unload_All_Position:
                 {
-                    unit.Self().order.Set(Order.MoveUnload, frame);
-                    unit.Self().targetPositionX.Set(_command._x, frame);
-                    unit.Self().targetPositionY.Set(_command._y, frame);
-                    unit.Self().orderTargetPositionX.Set(_command._x, frame);
-                    unit.Self().orderTargetPositionY.Set(_command._y, frame);
+                    unit.Self().Order.Set(Order.MoveUnload, frame);
+                    unit.Self().TargetPositionX.Set(_command._x, frame);
+                    unit.Self().TargetPositionY.Set(_command._y, frame);
+                    unit.Self().OrderTargetPositionX.Set(_command._x, frame);
+                    unit.Self().OrderTargetPositionY.Set(_command._y, frame);
                     break;
                 }
                 case UnitCommandType.Unsiege:
                 {
-                    unit.Self().order.Set(Order.Unsieging, frame);
+                    unit.Self().Order.Set(Order.Unsieging, frame);
                     break;
                 }
                 case UnitCommandType.Upgrade:
                 {
                     var upgradeType = (UpgradeType)_command._extra;
-                    unit.Self().order.Set(Order.Upgrade, frame);
-                    unit.Self().upgrade.Set(upgradeType, frame);
-                    unit.Self().isIdle.Set(false, frame);
+                    unit.Self().Order.Set(Order.Upgrade, frame);
+                    unit.Self().Upgrade.Set(upgradeType, frame);
+                    unit.Self().IsIdle.Set(false, frame);
                     var level = unit.GetPlayer().GetUpgradeLevel(upgradeType);
-                    unit.Self().remainingUpgradeTime.Set(upgradeType.UpgradeTime(level + 1), frame);
+                    unit.Self().RemainingUpgradeTime.Set(upgradeType.UpgradeTime(level + 1), frame);
                     _player.Self().minerals.SetOrAdd(-upgradeType.MineralPrice(level + 1), frame);
                     _player.Self().gas.SetOrAdd(upgradeType.GasPrice(level + 1), frame);
                     _player.Self().isUpgrading[(int)upgradeType].Set(true, frame);
@@ -935,8 +935,8 @@ namespace BWAPI.NET
                 {
                     if ((TechType)_command._extra == TechType.Stim_Packs && unit.GetHitPoints() > 10)
                     {
-                        unit.Self().hitPoints.SetOrAdd(-10, frame);
-                        unit.Self().stimTimer.Set(17, frame);
+                        unit.Self().HitPoints.SetOrAdd(-10, frame);
+                        unit.Self().StimTimer.Set(17, frame);
                     }
 
                     break;
@@ -949,11 +949,11 @@ namespace BWAPI.NET
                         return;
                     }
 
-                    unit.Self().order.Set(techType.GetOrder(), frame);
-                    unit.Self().targetPositionX.Set(_command._x, frame);
-                    unit.Self().targetPositionY.Set(_command._y, frame);
-                    unit.Self().orderTargetPositionX.Set(_command._x, frame);
-                    unit.Self().orderTargetPositionY.Set(_command._y, frame);
+                    unit.Self().Order.Set(techType.GetOrder(), frame);
+                    unit.Self().TargetPositionX.Set(_command._x, frame);
+                    unit.Self().TargetPositionY.Set(_command._y, frame);
+                    unit.Self().OrderTargetPositionX.Set(_command._x, frame);
+                    unit.Self().OrderTargetPositionY.Set(_command._y, frame);
                     break;
                 }
                 case UnitCommandType.Use_Tech_Unit:
@@ -966,13 +966,13 @@ namespace BWAPI.NET
                             return;
                         }
 
-                        unit.Self().order.Set(techType.GetOrder(), frame);
-                        unit.Self().orderTarget.Set(GetUnitID(target), frame);
+                        unit.Self().Order.Set(techType.GetOrder(), frame);
+                        unit.Self().OrderTarget.Set(GetUnitID(target), frame);
                         var targetPosition = target.GetPosition();
-                        unit.Self().targetPositionX.Set(targetPosition.x, frame);
-                        unit.Self().targetPositionY.Set(targetPosition.y, frame);
-                        unit.Self().orderTargetPositionX.Set(targetPosition.x, frame);
-                        unit.Self().orderTargetPositionY.Set(targetPosition.y, frame);
+                        unit.Self().TargetPositionX.Set(targetPosition.x, frame);
+                        unit.Self().TargetPositionY.Set(targetPosition.y, frame);
+                        unit.Self().OrderTargetPositionX.Set(targetPosition.x, frame);
+                        unit.Self().OrderTargetPositionY.Set(targetPosition.y, frame);
                     }
 
                     break;

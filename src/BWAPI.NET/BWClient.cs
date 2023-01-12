@@ -20,12 +20,7 @@ namespace BWAPI.NET
 
         public BWClient(IBWEventListener eventListener)
         {
-            if (eventListener == null)
-            {
-                throw new ArgumentNullException(nameof(eventListener));
-            }
-
-            _eventListener = eventListener;
+            _eventListener = eventListener ?? throw new ArgumentNullException(nameof(eventListener));
         }
 
         /// <summary>

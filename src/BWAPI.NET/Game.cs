@@ -92,7 +92,6 @@ namespace BWAPI.NET
 
         // USER DEFINED
         private TextSize textSize = TextSize.Default;
-        private BWClientConfiguration configuration = BWClientConfiguration.Default;
         private bool latcom = true;
 
         internal readonly ConnectedUnitCache _loadedUnitsCache;
@@ -232,11 +231,11 @@ namespace BWAPI.NET
                 }
             }
 
-            _walkable = new bool[_mapWidth * WalkPosition.TILE_WALK_FACTOR, _mapHeight * WalkPosition.TILE_WALK_FACTOR];
+            _walkable = new bool[_mapWidth * PointHelper.TileWalkFactor, _mapHeight * PointHelper.TileWalkFactor];
 
-            for (int x = 0; x < _mapWidth * WalkPosition.TILE_WALK_FACTOR; x++)
+            for (int x = 0; x < _mapWidth * PointHelper.TileWalkFactor; x++)
             {
-                for (int y = 0; y < _mapHeight * WalkPosition.TILE_WALK_FACTOR; y++)
+                for (int y = 0; y < _mapHeight * PointHelper.TileWalkFactor; y++)
                 {
                     _walkable[x, y] = _clientData.GameData.IsWalkable(x, y);
                 }
@@ -253,8 +252,8 @@ namespace BWAPI.NET
                 _mapSplitTilesRegion2[i] = _clientData.GameData.GetMapSplitTilesRegion2(i);
             }
 
-            _mapPixelWidth = _mapWidth * TilePosition.SIZE_IN_PIXELS;
-            _mapPixelHeight = _mapHeight * TilePosition.SIZE_IN_PIXELS;
+            _mapPixelWidth = _mapWidth * PointHelper.TilePositionScale;
+            _mapPixelHeight = _mapHeight * PointHelper.TilePositionScale;
 
             if (IsReplay())
             {
@@ -2521,7 +2520,7 @@ namespace BWAPI.NET
         /// <returns>true if the GUI is enabled, and everything is visible, false if the GUI is disabled and drawing
         /// functions are rejected</returns>
         /// <remarks>@see#setGUI</remarks>
-        bool IsGUIEnabled()
+        public bool IsGUIEnabled()
         {
             return _clientData.GameData.GetHasGUI();
         }
@@ -2613,11 +2612,6 @@ namespace BWAPI.NET
         /// <remarks>@seeUnit#hasPath</remarks>
         public bool HasPath(Position source, Position destination)
         {
-            if (source == null || destination == null)
-            {
-                return false;
-            }
-
             if (source.IsValid(this) && destination.IsValid(this))
             {
                 Region rgnA = GetRegionAt(source);
@@ -2880,7 +2874,7 @@ namespace BWAPI.NET
         /// <remarks>@see#getDamageTo</remarks>
         public int GetDamageFrom(UnitType fromType, UnitType toType, Player fromPlayer, Player toPlayer)
         {
-            return GetDamageFromImpl(fromType, toType, fromPlayer, toPlayer == null ? Self() : toPlayer);
+            return GetDamageFromImpl(fromType, toType, fromPlayer, toPlayer ?? Self());
         }
 
         public int GetDamageTo(UnitType toType, UnitType fromType, Player toPlayer)
@@ -2909,7 +2903,7 @@ namespace BWAPI.NET
         /// <remarks>@see#getDamageFrom</remarks>
         public int GetDamageTo(UnitType toType, UnitType fromType, Player toPlayer, Player fromPlayer)
         {
-            return GetDamageFromImpl(fromType, toType, fromPlayer == null ? Self() : fromPlayer, toPlayer);
+            return GetDamageFromImpl(fromType, toType, fromPlayer ?? Self(), toPlayer);
         }
 
         /// <summary>

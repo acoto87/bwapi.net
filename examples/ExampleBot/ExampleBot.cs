@@ -1,4 +1,3 @@
-using System;
 using BWAPI.NET;
 
 namespace ExampleBot
