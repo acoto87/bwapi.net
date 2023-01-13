@@ -4,6 +4,15 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
+        <Title>BWAPI.NET</Title>
+        <PackageId>BWAPI.NET</PackageId>
+        <PackageDescription>
+            A pure .NET BWAPI client implementation.
+        </PackageDescription>
+        <PackageTags>bwapi;starcraft;bot;ai</PackageTags>
+        <Version>0.1.0</Version>
+        <Authors>Alejandro Coto Gutiérrez</Authors>
+        <Product>BWAPI.NET</Product>
     </PropertyGroup>
 
 </Project>

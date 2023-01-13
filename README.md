@@ -1,1 +1,0 @@
-# bwapi.net
