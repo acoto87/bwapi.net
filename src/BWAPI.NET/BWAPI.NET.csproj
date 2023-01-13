@@ -5,7 +5,7 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <Title>BWAPI.NET</Title>
-        <Copyright>Copyright (c) Alejandro Coto Gutiérrez 2007</Copyright>
+        <Copyright>Copyright (c) Alejandro Coto Gutiérrez 2023</Copyright>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <PackageId>BWAPI.NET</PackageId>
@@ -13,7 +13,7 @@
             A pure .NET BWAPI client implementation.
         </PackageDescription>
         <PackageTags>api;ai;bots;starcraft;bwapi;startcraft-broodwar;broodwar;startcraft-bot;startcraft-broodwar-bot;startcraft-ai;bwapi-net;broodwar-bot;broodwar-api;</PackageTags>
-        <Version>0.1.1</Version>
+        <Version>0.1.2</Version>
         <Authors>Alejandro Coto Gutiérrez</Authors>
         <Product>BWAPI.NET</Product>
         <SignAssembly>False</SignAssembly>
