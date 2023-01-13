@@ -18,17 +18,21 @@ A pure .NET BWAPI 4.4.0 client implementation. It follows the idea of using memo
     * Install **StarCraft: Brood War**
     * Update **StarCraft: Brood War to 1.16.1**
     * Install [BWAPI](https://bwapi.github.io/)
-2. Run StarCraft through **Chaoslauncher**
+2. Create a bot project
+    * Run `dotnet new console -o MyBot`
+    * Copy and paste example bot below or develop your own bot
+    * Run `dotnet run` (At this point you should see _"Game table mapping not found."_ printed each second)
+3. Run StarCraft through **Chaoslauncher**
     * Run _Chaoslauncher.exe_ as administrator
         * Chaoslauncher is found in Chaoslauncher directory of [BWAPI](https://bwapi.github.io/) install directory
     * Check the _BWAPI Injector x.x.x [RELEASE]_
     * Click Start
         * Make sure the version is set to Starcraft 1.16.1, not ICCup 1.16.1
-3. Run a game against Blizzard's AI
+4. Run a game against Blizzard's AI
     * Go to **Single Player** -> **Expansion**
     * Select any user and click **OK**
     * Click **Play Custom**, select a map, and start a game
-4. Run a game against yourself
+5. Run a game against yourself
     * Run _Chaoslauncher - MultiInstance.exe_ as administrator
     * Start
         * Go to **Multiplayer** -> **Expansion** -> **Local PC**
