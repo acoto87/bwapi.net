@@ -2,7 +2,7 @@
 
 A pure .NET BWAPI 4.4.0 client implementation. It follows the idea of using memory mapped files to communicate with Starcraft launched by [BWAPI](https://bwapi.github.io/).
 
-> _This repository is port to .NET of [JBWAPI](https://github.com/JavaBWAPI/JBWAPI) which is a pure Java BWAPI 4.4.0 client implementation._
+> _This project is a port to .NET of [JBWAPI](https://github.com/JavaBWAPI/JBWAPI) which is a pure Java BWAPI 4.4.0 client implementation._
 
 ## Capabilities
 
