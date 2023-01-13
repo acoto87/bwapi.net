@@ -20,7 +20,9 @@ A pure .NET BWAPI 4.4.0 client implementation. It follows the idea of using memo
     * Install [BWAPI](https://bwapi.github.io/)
 2. Create a bot project
     * Run `dotnet new console -o MyBot`
-    * Copy and paste example bot below or develop your own bot
+    * Run `cd MyBot` to change directy into `MyBot` folder
+    * Run `dotnet add MyBot.csproj package BWAPI.NET` to add the reference to the nuget package generated from this repository
+    * Copy and paste example bot below into `Program.cs` or develop your own bot
     * Run `dotnet run` (At this point you should see _"Game table mapping not found."_ printed each second)
 3. Run StarCraft through **Chaoslauncher**
     * Run _Chaoslauncher.exe_ as administrator
