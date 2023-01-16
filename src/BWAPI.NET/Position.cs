@@ -4,6 +4,11 @@ namespace BWAPI.NET
 {
     public readonly struct Position : IPoint<Position>
     {
+        /// <summary>
+        /// The scale of a <see cref="Position"/>. Each position corresponds to a 1x1 pixel area.
+        /// </summary>
+        public const int Scale = PointHelper.PositionScale;
+
         public static readonly Position Invalid = new Position(32000 / PointHelper.PositionScale, 32000 / PointHelper.PositionScale);
         public static readonly Position None = new Position(32000 / PointHelper.PositionScale, 32032 / PointHelper.PositionScale);
         public static readonly Position Unknown = new Position(32000 / PointHelper.PositionScale, 32064 / PointHelper.PositionScale);
@@ -38,9 +43,19 @@ namespace BWAPI.NET
             return this + other;
         }
 
+        public Position Add(int value)
+        {
+            return this + new Position(value, value);
+        }
+
         public Position Subtract(Position other)
         {
             return this - other;
+        }
+
+        public Position Subtract(int value)
+        {
+            return this - new Position(value, value);
         }
 
         public Position Multiply(int multiplier)
@@ -58,9 +73,29 @@ namespace BWAPI.NET
             return new Position(p1.x + p2.x, p1.y + p2.y);
         }
 
+        public static Position operator +(Position p1, int value)
+        {
+            return new Position(p1.x + value, p1.y + value);
+        }
+
+        public static Position operator +(int value, Position p1)
+        {
+            return new Position(p1.x + value, p1.y + value);
+        }
+
         public static Position operator -(Position p1, Position p2)
         {
             return new Position(p1.x - p2.x, p1.y - p2.y);
+        }
+
+        public static Position operator -(Position p1, int value)
+        {
+            return new Position(p1.x - value, p1.y - value);
+        }
+
+        public static Position operator -(int value, Position p1)
+        {
+            return new Position(value - p1.x, value - p1.y);
         }
 
         public static Position operator *(Position p1, int multiplier)

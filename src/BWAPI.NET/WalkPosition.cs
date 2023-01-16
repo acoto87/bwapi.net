@@ -4,6 +4,11 @@ namespace BWAPI.NET
 {
     public readonly struct WalkPosition : IPoint<WalkPosition>
     {
+        /// <summary>
+        /// The scale of a <see cref="WalkPosition"/>. Each walk position corresponds to an 8x8 pixel area.
+        /// </summary>
+        public const int Scale = PointHelper.WalkPositionScale;
+
         public static readonly WalkPosition Invalid = new WalkPosition(32000 / PointHelper.WalkPositionScale, 32000 / PointHelper.WalkPositionScale);
         public static readonly WalkPosition None = new WalkPosition(32000 / PointHelper.WalkPositionScale, 32032 / PointHelper.WalkPositionScale);
         public static readonly WalkPosition Unknown = new WalkPosition(32000 / PointHelper.WalkPositionScale, 32064 / PointHelper.WalkPositionScale);
@@ -33,9 +38,19 @@ namespace BWAPI.NET
             return this + other;
         }
 
+        public WalkPosition Add(int value)
+        {
+            return this + new WalkPosition(value, value);
+        }
+
         public WalkPosition Subtract(WalkPosition other)
         {
             return this - other;
+        }
+
+        public WalkPosition Subtract(int value)
+        {
+            return this - new WalkPosition(value, value);
         }
 
         public WalkPosition Multiply(int multiplier)
@@ -53,9 +68,29 @@ namespace BWAPI.NET
             return new WalkPosition(p1.x + p2.x, p1.y + p2.y);
         }
 
+        public static WalkPosition operator +(WalkPosition p1, int value)
+        {
+            return new WalkPosition(p1.x + value, p1.y + value);
+        }
+
+        public static WalkPosition operator +(int value, WalkPosition p1)
+        {
+            return new WalkPosition(p1.x + value, p1.y + value);
+        }
+
         public static WalkPosition operator -(WalkPosition p1, WalkPosition p2)
         {
             return new WalkPosition(p1.x - p2.x, p1.y - p2.y);
+        }
+
+        public static WalkPosition operator -(WalkPosition p1, int value)
+        {
+            return new WalkPosition(p1.x - value, p1.y - value);
+        }
+
+        public static WalkPosition operator -(int value, WalkPosition p1)
+        {
+            return new WalkPosition(value - p1.x, value - p1.y);
         }
 
         public static WalkPosition operator *(WalkPosition p1, int multiplier)

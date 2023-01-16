@@ -4,6 +4,11 @@ namespace BWAPI.NET
 {
     public readonly struct TilePosition : IPoint<TilePosition>
     {
+        /// <summary>
+        /// The scale of a <see cref="TilePosition"/>. Each tile position corresponds to a 32x32 pixel area.
+        /// </summary>
+        public const int Scale = PointHelper.TilePositionScale;
+
         public static readonly TilePosition Invalid = new TilePosition(32000 / PointHelper.TilePositionScale, 32000 / PointHelper.TilePositionScale);
         public static readonly TilePosition None = new TilePosition(32000 / PointHelper.TilePositionScale, 32032 / PointHelper.TilePositionScale);
         public static readonly TilePosition Unknown = new TilePosition(32000 / PointHelper.TilePositionScale, 32064 / PointHelper.TilePositionScale);
@@ -38,9 +43,19 @@ namespace BWAPI.NET
             return this + other;
         }
 
+        public TilePosition Add(int value)
+        {
+            return this + new TilePosition(value, value);
+        }
+
         public TilePosition Subtract(TilePosition other)
         {
             return this - other;
+        }
+
+        public TilePosition Subtract(int value)
+        {
+            return this - new TilePosition(value, value);
         }
 
         public TilePosition Multiply(int multiplier)
@@ -58,9 +73,29 @@ namespace BWAPI.NET
             return new TilePosition(p1.x + p2.x, p1.y + p2.y);
         }
 
+        public static TilePosition operator +(TilePosition p1, int value)
+        {
+            return new TilePosition(p1.x + value, p1.y + value);
+        }
+
+        public static TilePosition operator +(int value, TilePosition p1)
+        {
+            return new TilePosition(p1.x + value, p1.y + value);
+        }
+
         public static TilePosition operator -(TilePosition p1, TilePosition p2)
         {
             return new TilePosition(p1.x - p2.x, p1.y - p2.y);
+        }
+
+        public static TilePosition operator -(TilePosition p1, int value)
+        {
+            return new TilePosition(p1.x - value, p1.y - value);
+        }
+
+        public static TilePosition operator -(int value, TilePosition p1)
+        {
+            return new TilePosition(value - p1.x, value - p1.y);
         }
 
         public static TilePosition operator *(TilePosition p1, int multiplier)
@@ -85,7 +120,7 @@ namespace BWAPI.NET
 
         public double GetDistance(TilePosition point)
         {
-            return this.Subtract(point).GetLength();
+            return (this - point).GetLength();
         }
 
         public double GetLength()

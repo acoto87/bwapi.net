@@ -17,7 +17,11 @@ namespace BWAPI.NET
 
         T Add(T other);
 
+        T Add(int value);
+
         T Subtract(T other);
+
+        T Subtract(int value);
 
         T Multiply(int multiplier);
 
