@@ -55,6 +55,35 @@ namespace BWAPI.NET
 
         public const int TileWalkFactor = TilePositionScale / WalkPositionScale;
 
+        public static T New<T>(int x, int y)
+            where T : IPoint<T>
+        {
+            if (typeof(T) == typeof(Position)) return (T)(new Position(x, y) as IPoint<Position>);
+            if (typeof(T) == typeof(WalkPosition)) return (T)(new WalkPosition(x, y) as IPoint<WalkPosition>);
+            if (typeof(T) == typeof(TilePosition)) return (T)(new TilePosition(x, y) as IPoint<TilePosition>);
+            throw new NotSupportedException("Unknown point type " + typeof(T));
+        }
+
+        public static TTo New<TFrom, TTo>(TFrom p)
+            where TFrom : IPoint<TFrom>
+            where TTo : IPoint<TTo>
+        {
+            var scaleFrom = GetScale<TFrom>();
+            var scaleTo = GetScale<TTo>();
+            var x = (int)(p.X * (double)scaleFrom / scaleTo);
+            var y = (int)(p.Y * (double)scaleFrom / scaleTo);
+            return New<TTo>(x, y);
+        }
+
+        public static int GetScale<T>()
+            where T : IPoint<T>
+        {
+            if (typeof(T) == typeof(Position)) return PointHelper.PositionScale;
+            if (typeof(T) == typeof(WalkPosition)) return PointHelper.WalkPositionScale;
+            if (typeof(T) == typeof(TilePosition)) return PointHelper.TilePositionScale;
+            throw new NotSupportedException("Unknown point type " + typeof(T));
+        }
+
         public static double GetLength(int x, int y)
         {
             return Math.Sqrt(x * x + y * y);

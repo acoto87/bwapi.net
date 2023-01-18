@@ -13,54 +13,90 @@ namespace BWAPI.NET
             _second = second;
         }
 
-        public K GetFirst()
+        public readonly K First
+        {
+            get => _first;
+        }
+
+        public readonly V Second
+        {
+            get => _second;
+        }
+
+        public readonly K Left
+        {
+            get => _first;
+        }
+
+        public readonly V Right
+        {
+            get => _second;
+        }
+
+        public readonly K Key
+        {
+            get => _first;
+        }
+
+        public readonly V Value
+        {
+            get => _second;
+        }
+
+        public readonly K GetFirst()
         {
             return _first;
         }
 
-        public V GetSecond()
+        public readonly V GetSecond()
         {
             return _second;
         }
 
-        public K GetLeft()
+        public readonly K GetLeft()
         {
             return _first;
         }
 
-        public V GetRight()
+        public readonly V GetRight()
         {
             return _second;
         }
 
-        public K GetKey()
+        public readonly K GetKey()
         {
             return _first;
         }
 
-        public V GetValue()
+        public readonly V GetValue()
         {
             return _second;
         }
 
-        public override string ToString()
+        public readonly override string ToString()
         {
             return "{" + _first + ", " + _second + "}";
         }
 
-        public bool Equals(Pair<K, V> other)
+        public readonly bool Equals(Pair<K, V> other)
         {
-            return object.Equals(_first, other._first) && object.Equals(_second, other._second);
+            return Equals(_first, other._first) && object.Equals(_second, other._second);
         }
 
-        public override bool Equals(object o)
+        public readonly override bool Equals(object o)
         {
             return o is Pair<K, V> other && Equals(other);
         }
 
-        public override int GetHashCode()
+        public readonly override int GetHashCode()
         {
             return HashCode.Combine(_first, _second);
+        }
+
+        public readonly void Deconstruct(out K first, out V second)
+        {
+            first = _first;
+            second = _second;
         }
     }
 }

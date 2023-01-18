@@ -68,6 +68,36 @@ namespace BWAPI.NET
             return this / divisor;
         }
 
+        public static bool operator ==(Position p1, Position p2)
+        {
+            return p1.x == p2.x && p1.y == p2.y;
+        }
+
+        public static bool operator !=(Position p1, Position p2)
+        {
+            return !(p1 == p2);
+        }
+
+        public static bool operator <(Position left, Position right)
+        {
+            return left.CompareTo(right) < 0;
+        }
+
+        public static bool operator >(Position left, Position right)
+        {
+            return left.CompareTo(right) > 0;
+        }
+
+        public static bool operator <=(Position left, Position right)
+        {
+            return left.CompareTo(right) <= 0;
+        }
+
+        public static bool operator >=(Position left, Position right)
+        {
+            return left.CompareTo(right) >= 0;
+        }
+
         public static Position operator +(Position p1, Position p2)
         {
             return new Position(p1.x + p2.x, p1.y + p2.y);
