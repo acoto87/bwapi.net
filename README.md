@@ -10,6 +10,7 @@ A pure .NET BWAPI 4.4.0 client implementation. It follows the idea of using memo
 * Read all relevant aspects of the game state.
 * Get comprehensive information on the unit types, upgrades, technologies, weapons, and more.
 * Study and research real-time AI algorithms in a robust commercial RTS environment.
+* Use additional libraries such as [BWEM.NET](https://github.com/acoto87/bwem.net) to create more intelligent bots by analyzing the map.
 
 ## Quick Start
 
