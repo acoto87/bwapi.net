@@ -4,8 +4,18 @@ using System.Collections.ObjectModel;
 
 namespace BWAPI.NET
 {
-    public static class EnumerableHelper
+    /// <summary>
+    /// Internal helper methods around IEnumerable and List and Dictionary.
+    /// </summary>
+    internal static class EnumerableHelper
     {
+        /// <summary>
+        /// Enumerates the collection applying the specified action to each element.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the collection.</typeparam>
+        /// <param name="source">The collection to make readonly.</param>
+        /// <param name="action">The action to execute foreach element.</param>
+        /// <exception cref="ArgumentNullException">If the collection is null.</exception>
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             if (source == null)
@@ -19,11 +29,31 @@ namespace BWAPI.NET
             }
         }
 
+        /// <summary>
+        /// Returns a readonly collection for the specified array.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the array.</typeparam>
+        /// <param name="source">The array to make readonly.</param>
+        /// <exception cref="ArgumentNullException">If the collection is null.</exception>
+        /// <returns>A <see cref="ReadOnlyCollection<T>"/> of the the array.</returns>
+        /// <exception cref="ArgumentNullException">If the array is null.</exception>
         public static ReadOnlyCollection<T> AsReadOnly<T>(this T[] source)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             return new ReadOnlyCollection<T>(source);
         }
 
+        /// <summary>
+        /// Returns a readonly dictionary for the specified dictionary.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the keys of the dictionary.</typeparam>
+        /// <typeparam name="TValue">The type of the values of the dictionary.</typeparam>
+        /// <param name="dictionary">The dictionary to make readonly.</param>
+        /// <returns>A <see cref="ReadOnlyDictionary<TKey, TValue>"/> of the dictionary.</returns>
         public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
         {
             return new ReadOnlyDictionary<TKey, TValue>(dictionary);

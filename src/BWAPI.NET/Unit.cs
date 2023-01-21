@@ -67,13 +67,13 @@ namespace BWAPI.NET
             _unitData = unitData;
             _game = game;
 
+            UpdatePosition(0);
+
             _initialType = GetUnitType();
             _initialResources = GetResources();
             _initialHitPoints = GetHitPoints();
             _initialPosition = GetPosition();
             _initialTilePosition = GetTilePosition();
-
-            UpdatePosition(0);
         }
 
         private static bool ReallyGatheringGas(Unit targ, Player player)
