@@ -6,12 +6,10 @@ namespace ExampleBot
     {
         public static void Main()
         {
-            Console.WriteLine("Hello, World!");
+            Console.WriteLine("Hello, Bot!");
 
             var bot = new ExampleBot();
             bot.Run();
-
-            Console.ReadLine();
         }
     }
 }

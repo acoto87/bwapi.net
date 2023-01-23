@@ -8,8 +8,6 @@
 
             var bot = new MarineHell();
             bot.Run();
-
-            Console.ReadLine();
         }
     }
 }

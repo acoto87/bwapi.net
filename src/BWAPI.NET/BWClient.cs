@@ -80,6 +80,7 @@ namespace BWAPI.NET
                     {
                         return;
                     }
+
                     _client.SendFrameReceiveFrame();
 
                     if (gameData.IsInGame())
@@ -123,7 +124,7 @@ namespace BWAPI.NET
         {
             ClientData.GameData_ gameData = _clientData.GameData;
 
-            // Populate gameOver before invoking event handlers (in case the bot throws)
+            // Populate _gameOver before invoking event handlers (in case the bot throws)
             for (int i = 0; i < gameData.GetEventCount(); i++)
             {
                 _gameOver = _gameOver || gameData.GetEvents(i).GetEventType() == EventType.MatchEnd;
