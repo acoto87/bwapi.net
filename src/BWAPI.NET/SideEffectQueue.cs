@@ -27,7 +27,7 @@ namespace BWAPI.NET
         /// </summary>
         /// <param name="liveGameData">
         /// The live game frame's data, using the BWAPI shared memory.</param>
-        public void FlushTo(ClientData.TGameData liveGameData)
+        public void FlushTo(ClientData.GameData_ liveGameData)
         {
             lock (this)
             {

@@ -2,7 +2,6 @@
 
 namespace BWAPI.NET
 {
-
     /// <summary>
     /// Client class to connect to the game with.
     /// </summary>
@@ -13,10 +12,10 @@ namespace BWAPI.NET
         private readonly IBWEventListener _eventListener;
         private BWClientConfiguration _configuration;
         private PerformanceMetrics _performanceMetrics;
-        private BotWrapper _botWrapper;
         private Client _client;
         private ClientData _clientData;
         private Game _game;
+        private bool _gameOver;
 
         public BWClient(IBWEventListener eventListener)
         {
@@ -69,12 +68,12 @@ namespace BWAPI.NET
                 return;
             }
 
-            _botWrapper = new BotWrapper(this);
             _game = new Game(_clientData);
 
             do
             {
-                ClientData.TGameData gameData = _clientData.GameData;
+                ClientData.GameData_ gameData = _clientData.GameData;
+
                 while (!gameData.IsInGame())
                 {
                     if (!_client.IsConnected)
@@ -82,26 +81,33 @@ namespace BWAPI.NET
                         return;
                     }
                     _client.SendFrameReceiveFrame();
+
                     if (gameData.IsInGame())
                     {
                         _performanceMetrics = new PerformanceMetrics(_configuration);
-                        _botWrapper.StartNewGame();
+                        _gameOver = false;
                     }
                 }
+
                 while (gameData.IsInGame())
                 {
-                    _botWrapper.OnFrame();
+                    Log("Main: onFrame synchronous start");
+                    HandleEvents();
+                    Log("Main: onFrame synchronous end");
+
                     _performanceMetrics.FlushSideEffects.Time(() => _game.sideEffects.FlushTo(gameData));
                     _performanceMetrics.FrameDurationReceiveToSend.StopTiming();
 
                     _client.SendFrameReceiveFrame();
+
                     if (!_client.IsConnected)
                     {
                         Console.WriteLine("Reconnecting...");
                         _client.Reconnect();
                     }
                 }
-                _botWrapper.EndGame();
+
+                _gameOver = true;
             } while (_configuration.AutoContinue);
         }
 
@@ -110,6 +116,107 @@ namespace BWAPI.NET
             if (_configuration.LogVerbosely)
             {
                 Console.WriteLine(message);
+            }
+        }
+
+        private void HandleEvents()
+        {
+            ClientData.GameData_ gameData = _clientData.GameData;
+
+            // Populate gameOver before invoking event handlers (in case the bot throws)
+            for (int i = 0; i < gameData.GetEventCount(); i++)
+            {
+                _gameOver = _gameOver || gameData.GetEvents(i).GetEventType() == EventType.MatchEnd;
+            }
+
+            _performanceMetrics.BotResponse.TimeIf(!_gameOver && (gameData.GetFrameCount() > 0 || !_configuration.UnlimitedFrameZero), () =>
+            {
+                for (int i = 0; i < gameData.GetEventCount(); i++)
+                {
+                    HandleEvent(gameData.GetEvents(i));
+                }
+            });
+        }
+
+        private void HandleEvent(ClientData.Event e)
+        {
+            Unit u;
+            int frames = _game.GetFrameCount();
+            switch (e.GetEventType())
+            {
+                case EventType.MatchStart:
+                    _game.Init();
+                    _eventListener.OnStart();
+                    break;
+                case EventType.MatchEnd:
+                    _eventListener.OnEnd(e.GetV1() != 0);
+                    break;
+                case EventType.MatchFrame:
+                    _game.OnFrame(frames);
+                    _eventListener.OnFrame();
+                    break;
+                case EventType.SendText:
+                    _eventListener.OnSendText(_game.ClientData.GameData.GetEventStrings(e.GetV1()));
+                    break;
+                case EventType.ReceiveText:
+                    _eventListener.OnReceiveText(_game.GetPlayer(e.GetV1()), _game.ClientData.GameData.GetEventStrings(e.GetV2()));
+                    break;
+                case EventType.PlayerLeft:
+                    _eventListener.OnPlayerLeft(_game.GetPlayer(e.GetV1()));
+                    break;
+                case EventType.NukeDetect:
+                    _eventListener.OnNukeDetect(new Position(e.GetV1(), e.GetV2()));
+                    break;
+                case EventType.SaveGame:
+                    _eventListener.OnSaveGame(_game.ClientData.GameData.GetEventStrings(e.GetV1()));
+                    break;
+                case EventType.UnitDiscover:
+                    _game.UnitCreate(e.GetV1());
+                    u = _game.GetUnit(e.GetV1());
+                    u.UpdatePosition(frames);
+                    _eventListener.OnUnitDiscover(u);
+                    break;
+                case EventType.UnitEvade:
+                    u = _game.GetUnit(e.GetV1());
+                    u.UpdatePosition(frames);
+                    _eventListener.OnUnitEvade(u);
+                    break;
+                case EventType.UnitShow:
+                    _game.UnitShow(e.GetV1());
+                    u = _game.GetUnit(e.GetV1());
+                    u.UpdatePosition(frames);
+                    _eventListener.OnUnitShow(u);
+                    break;
+                case EventType.UnitHide:
+                    _game.UnitHide(e.GetV1());
+                    u = _game.GetUnit(e.GetV1());
+                    _eventListener.OnUnitHide(u);
+                    break;
+                case EventType.UnitCreate:
+                    _game.UnitCreate(e.GetV1());
+                    u = _game.GetUnit(e.GetV1());
+                    u.UpdatePosition(frames);
+                    _eventListener.OnUnitCreate(u);
+                    break;
+                case EventType.UnitDestroy:
+                    _game.UnitHide(e.GetV1());
+                    u = _game.GetUnit(e.GetV1());
+                    _eventListener.OnUnitDestroy(u);
+                    break;
+                case EventType.UnitMorph:
+                    u = _game.GetUnit(e.GetV1());
+                    u.UpdatePosition(frames);
+                    _eventListener.OnUnitMorph(u);
+                    break;
+                case EventType.UnitRenegade:
+                    u = _game.GetUnit(e.GetV1());
+                    _eventListener.OnUnitRenegade(u);
+                    break;
+                case EventType.UnitComplete:
+                    _game.UnitCreate(e.GetV1());
+                    u = _game.GetUnit(e.GetV1());
+                    _eventListener.OnUnitComplete(u);
+                    break;
             }
         }
 
@@ -157,7 +264,7 @@ namespace BWAPI.NET
         /// <returns>The number of frames between the one exposed to the bot and the most recent received by JBWAPI.</returns>
         public int FramesBehind
         {
-            get => _botWrapper == null ? 0 : Math.Max(0, _clientData.GameData.GetFrameCount() - _game.GetFrameCount());
+            get => _clientData != null ? Math.Max(0, _clientData.GameData.GetFrameCount() - _game.GetFrameCount()) : 0;
         }
     }
 }

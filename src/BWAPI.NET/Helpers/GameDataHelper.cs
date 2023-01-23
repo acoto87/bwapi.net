@@ -12,7 +12,7 @@ namespace BWAPI.NET
 
         private const int MaxStringLength = 1024;
 
-        public static int AddString(ClientData.TGameData gameData, string str)
+        public static int AddString(ClientData.GameData_ gameData, string str)
         {
             var stringCount = gameData.GetStringCount();
             if (stringCount >= MaxCount)
@@ -27,7 +27,7 @@ namespace BWAPI.NET
             return stringCount;
         }
 
-        public static ClientData.Shape AddShape(ClientData.TGameData gameData)
+        public static ClientData.Shape AddShape(ClientData.GameData_ gameData)
         {
             var shapeCount = gameData.GetShapeCount();
             if (shapeCount >= MaxCount)
@@ -39,7 +39,7 @@ namespace BWAPI.NET
             return gameData.GetShapes(shapeCount);
         }
 
-        public static ClientData.Command AddCommand(ClientData.TGameData gameData)
+        public static ClientData.Command AddCommand(ClientData.GameData_ gameData)
         {
             var commandCount = gameData.GetCommandCount();
             if (commandCount >= MaxCount)
@@ -51,7 +51,7 @@ namespace BWAPI.NET
             return gameData.GetCommands(commandCount);
         }
 
-        public static ClientData.UnitCommand AddUnitCommand(ClientData.TGameData gameData)
+        public static ClientData.UnitCommand AddUnitCommand(ClientData.GameData_ gameData)
         {
             var unitCommandCount = gameData.GetUnitCommandCount();
             if (unitCommandCount >= MaxCount)

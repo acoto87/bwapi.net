@@ -14,7 +14,7 @@ namespace BWAPI.NET
         private long _timeStarted;
         private int _interrupted;
 
-        private readonly TRunningTotal _runningTotal = new TRunningTotal();
+        private readonly RunningTotal_ _runningTotal = new RunningTotal_();
         private readonly List<Threshold> _thresholds = new List<Threshold>();
 
         public PerformanceMetric(string name, params double[] thresholds)
@@ -126,7 +126,7 @@ namespace BWAPI.NET
             return output;
         }
 
-        public TRunningTotal RunningTotal
+        public RunningTotal_ RunningTotal
         {
             get => _runningTotal;
         }
@@ -136,7 +136,7 @@ namespace BWAPI.NET
             get => _interrupted;
         }
 
-        public class TRunningTotal
+        public class RunningTotal_
         {
             private int _samples;
             private double _last;
@@ -183,12 +183,12 @@ namespace BWAPI.NET
         {
             private readonly double _threshold;
 
-            private readonly TRunningTotal _runningTotal;
+            private readonly RunningTotal_ _runningTotal;
 
             public Threshold(double value)
             {
                 _threshold = value;
-                _runningTotal = new TRunningTotal();
+                _runningTotal = new RunningTotal_();
             }
 
             public void Record(double value)

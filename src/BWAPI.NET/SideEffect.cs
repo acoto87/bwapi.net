@@ -12,7 +12,7 @@ namespace BWAPI.NET
         {
             var output = new SideEffect
             {
-                application = (ClientData.TGameData gameData) =>
+                application = (ClientData.GameData_ gameData) =>
                 {
                     var unitCommand = GameDataHelper.AddUnitCommand(gameData);
                     unitCommand.SetTid(type);
@@ -30,7 +30,7 @@ namespace BWAPI.NET
         {
             var output = new SideEffect
             {
-                application = (ClientData.TGameData gameData) =>
+                application = (ClientData.GameData_ gameData) =>
                 {
                     var command = GameDataHelper.AddCommand(gameData);
                     command.SetCommandType(type);
@@ -45,7 +45,7 @@ namespace BWAPI.NET
         {
             var output = new SideEffect
             {
-                application = (ClientData.TGameData gameData) =>
+                application = (ClientData.GameData_ gameData) =>
                 {
                     var command = GameDataHelper.AddCommand(gameData);
                     command.SetCommandType(type);
@@ -60,7 +60,7 @@ namespace BWAPI.NET
         {
             var output = new SideEffect
             {
-                application = (ClientData.TGameData gameData) =>
+                application = (ClientData.GameData_ gameData) =>
                 {
                     var shape = GameDataHelper.AddShape(gameData);
                     shape.SetShapeType(type);
@@ -82,7 +82,7 @@ namespace BWAPI.NET
         {
             var output = new SideEffect
             {
-                application = (ClientData.TGameData gameData) =>
+                application = (ClientData.GameData_ gameData) =>
                 {
                     var shape = GameDataHelper.AddShape(gameData);
                     shape.SetShapeType(type);
@@ -100,13 +100,13 @@ namespace BWAPI.NET
             return output;
         }
 
-        private Action<ClientData.TGameData> application;
+        private Action<ClientData.GameData_> application;
 
         private SideEffect()
         {
         }
 
-        public void Apply(ClientData.TGameData gameData)
+        public void Apply(ClientData.GameData_ gameData)
         {
             application(gameData);
         }

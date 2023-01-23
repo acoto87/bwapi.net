@@ -7,32 +7,35 @@ namespace BWAPI.NET
     /// <summary>
     /// Default Windows BWAPI pipe connection with shared memory.
     /// </summary>
-    class ClientConnectionW32 : IClientConnection
+    internal class ClientConnectionW32 : IClientConnection
     {
         private FileStream _pipeFileStream;
+        private MemoryMappedFile _gameTableMemoryMappedFile;
+        private MemoryMappedFile _gameMemoryMappedFile;
 
         public void Disconnect()
         {
-            if (_pipeFileStream != null)
+            try
             {
-                try
-                {
-                    _pipeFileStream.Close();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine(e.StackTrace);
-                }
-
-                _pipeFileStream = null;
+                _gameTableMemoryMappedFile?.Dispose();
+                _gameMemoryMappedFile?.Dispose();
+                _pipeFileStream?.Dispose();
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+
+            _gameTableMemoryMappedFile = null;
+            _gameMemoryMappedFile = null;
+            _pipeFileStream = null;
         }
 
         public MemoryMappedViewAccessor GetGameTableViewAccessor()
         {
-            var sharedMemoryMappedFile = MemoryMappedFile.OpenExisting("Local\\bwapi_shared_memory_game_list", MemoryMappedFileRights.ReadWrite, HandleInheritability.None);
-            return sharedMemoryMappedFile.CreateViewAccessor(0, GameTable.Size, MemoryMappedFileAccess.ReadWrite);
+            _gameTableMemoryMappedFile = MemoryMappedFile.OpenExisting("Local\\bwapi_shared_memory_game_list", MemoryMappedFileRights.ReadWrite, HandleInheritability.None);
+            return _gameTableMemoryMappedFile.CreateViewAccessor(0, GameTable.Size, MemoryMappedFileAccess.ReadWrite);
         }
 
         public MemoryMappedViewAccessor GetSharedMemoryViewAccessor(int serverProcID)
@@ -41,9 +44,8 @@ namespace BWAPI.NET
 
             try
             {
-                // TODO: Dipose gameTable?
-                var sharedMemoryMappedFile = MemoryMappedFile.OpenExisting(sharedMemoryName, MemoryMappedFileRights.ReadWrite, HandleInheritability.None);
-                return sharedMemoryMappedFile.CreateViewAccessor(0, ClientData.TGameData.Size, MemoryMappedFileAccess.ReadWrite);
+                _gameMemoryMappedFile = MemoryMappedFile.OpenExisting(sharedMemoryName, MemoryMappedFileRights.ReadWrite, HandleInheritability.None);
+                return _gameMemoryMappedFile.CreateViewAccessor(0, ClientData.GameData_.Size, MemoryMappedFileAccess.ReadWrite);
             }
             catch (Exception e)
             {

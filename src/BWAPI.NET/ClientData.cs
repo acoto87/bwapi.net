@@ -5,27 +5,27 @@ namespace BWAPI.NET
     public sealed class ClientData
     {
         private readonly MemoryMappedViewAccessor _gameViewAccessor;
-        private readonly TGameData _gameData;
+        private readonly GameData_ _gameData;
 
         public ClientData(MemoryMappedViewAccessor gameViewAccessor)
         {
             _gameViewAccessor = gameViewAccessor;
-            _gameData = new TGameData(_gameViewAccessor, 0);
+            _gameData = new GameData_(_gameViewAccessor, 0);
         }
 
-        public TGameData GameData
+        public GameData_ GameData
         {
             get => _gameData;
         }
 
-        public class TGameData
+        public class GameData_
         {
             public const int Size = 33017048;
 
             private readonly MemoryMappedViewAccessor _accessor;
             private readonly int _offset;
 
-            public TGameData(MemoryMappedViewAccessor accessor, int offset)
+            public GameData_(MemoryMappedViewAccessor accessor, int offset)
             {
                 _accessor = accessor;
                 _offset = offset;

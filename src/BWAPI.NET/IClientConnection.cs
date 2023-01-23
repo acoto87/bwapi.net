@@ -6,7 +6,7 @@ namespace BWAPI.NET
     /// <summary>
     /// Client - Server connection abstraction
     /// </summary>
-    interface IClientConnection
+    public interface IClientConnection
     {
         void Disconnect();
 

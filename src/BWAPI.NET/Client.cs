@@ -4,13 +4,13 @@ using System.Threading;
 
 namespace BWAPI.NET
 {
-    public class Client
+    internal class Client
     {
         private readonly BWClient _bwClient;
         private readonly IClientConnection _clientConnector;
         private MemoryMappedViewAccessor _gameTableViewAccessor;
         private MemoryMappedViewAccessor _gameViewAccessor;
-        private bool _connected;
+        private bool _isConnected;
 
         public Client(BWClient bwClient)
         {
@@ -20,9 +20,9 @@ namespace BWAPI.NET
 
         public bool Connect()
         {
-            if (_connected)
+            if (_isConnected)
             {
-                Console.Error.WriteLine("Already connected");
+                Console.WriteLine("Already connected");
                 return true;
             }
 
@@ -109,8 +109,6 @@ namespace BWAPI.NET
                 return false;
             }
 
-
-
             try
             {
                 _clientConnector.ConnectSharedLock(serverProcID);
@@ -155,7 +153,7 @@ namespace BWAPI.NET
             }
 
             Console.WriteLine("Connection successful");
-            _connected = true;
+            _isConnected = true;
             return true;
         }
 
@@ -171,16 +169,14 @@ namespace BWAPI.NET
         {
             if (_bwClient.Configuration.DebugConnection)
             {
-                Console.Error.Write("Disconnect called by: ");
-                Console.Error.WriteLine(Environment.StackTrace);
+                Console.Write("Disconnect called by: ");
+                Console.WriteLine(Environment.StackTrace);
             }
 
-            if (!_connected)
+            if (!_isConnected)
             {
                 return;
             }
-
-            _clientConnector.Disconnect();
 
             _gameViewAccessor.Dispose();
             _gameViewAccessor = null;
@@ -188,7 +184,9 @@ namespace BWAPI.NET
             _gameTableViewAccessor.Dispose();
             _gameTableViewAccessor = null;
 
-            _connected = false;
+            _clientConnector.Disconnect();
+
+            _isConnected = false;
         }
 
         public void SendFrameReceiveFrame()
@@ -274,7 +272,7 @@ namespace BWAPI.NET
 
         public bool IsConnected
         {
-            get => _connected;
+            get => _isConnected;
         }
 
         public MemoryMappedViewAccessor GameTableViewAccessor

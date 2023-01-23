@@ -111,9 +111,9 @@ namespace BWAPI.NET
             _larvaCache = new ConnectedUnitCache(this, x => x.GetHatchery());
         }
 
-        /*
-         Call this method in EventHander::OnMatchStart
-         */
+        /// <summary>
+        /// Called when EventHandler::OnMatchStart event arrives
+        /// </summary>
         public void Init()
         {
             _visibleUnits.Clear();
