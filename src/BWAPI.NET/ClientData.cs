@@ -4,13 +4,13 @@ namespace BWAPI.NET
 {
     public sealed class ClientData
     {
-        private readonly MemoryMappedViewAccessor _gameViewAccessor;
+        private readonly MemoryMappedViewAccessor _accessor;
         private readonly GameData_ _gameData;
 
-        public ClientData(MemoryMappedViewAccessor gameViewAccessor)
+        public ClientData(MemoryMappedViewAccessor accessor)
         {
-            _gameViewAccessor = gameViewAccessor;
-            _gameData = new GameData_(_gameViewAccessor, 0);
+            _accessor = accessor;
+            _gameData = new GameData_(_accessor, 0);
         }
 
         public GameData_ GameData

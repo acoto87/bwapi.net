@@ -267,5 +267,10 @@ namespace BWAPI.NET
         {
             get => _clientData != null ? Math.Max(0, _clientData.GameData.GetFrameCount() - _game.GetFrameCount()) : 0;
         }
+
+        internal Client Client
+        {
+            get => _client;
+        }
     }
 }

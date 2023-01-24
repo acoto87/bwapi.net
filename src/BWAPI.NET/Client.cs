@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Threading;
 
@@ -7,15 +8,18 @@ namespace BWAPI.NET
     internal class Client
     {
         private readonly BWClient _bwClient;
-        private readonly IClientConnection _clientConnector;
+        private MemoryMappedFile _gameTableMemoryMappedFile;
+        private MemoryMappedFile _gameMemoryMappedFile;
+        private FileStream _pipeFileStream;
         private MemoryMappedViewAccessor _gameTableViewAccessor;
         private MemoryMappedViewAccessor _gameViewAccessor;
+        private MemoryMappedViewStream _gameTableViewStream;
+        private MemoryMappedViewStream _gameViewStream;
         private bool _isConnected;
 
         public Client(BWClient bwClient)
         {
             _bwClient = bwClient;
-            _clientConnector = new ClientConnectionW32();
         }
 
         public bool Connect()
@@ -28,7 +32,8 @@ namespace BWAPI.NET
 
             try
             {
-                _gameTableViewAccessor = _clientConnector.GetGameTableViewAccessor();
+                _gameTableViewAccessor = GetGameTableViewAccessor();
+                _gameTableViewStream = GetGameTableViewStream();
             }
             catch (Exception e)
             {
@@ -92,7 +97,8 @@ namespace BWAPI.NET
 
             try
             {
-                _gameViewAccessor = _clientConnector.GetSharedMemoryViewAccessor(serverProcID);
+                _gameViewAccessor = GetGameViewAccessor(serverProcID);
+                _gameViewStream = GetGameViewStream(serverProcID);
             }
             catch (Exception e)
             {
@@ -111,7 +117,7 @@ namespace BWAPI.NET
 
             try
             {
-                _clientConnector.ConnectSharedLock(serverProcID);
+                ConnectSharedLock(serverProcID);
             }
             catch (Exception e)
             {
@@ -136,7 +142,7 @@ namespace BWAPI.NET
 
             try
             {
-                _clientConnector.WaitForServerData();
+                WaitForServerData();
             }
             catch (Exception e)
             {
@@ -178,13 +184,21 @@ namespace BWAPI.NET
                 return;
             }
 
-            _gameViewAccessor.Dispose();
+            _gameViewAccessor?.Dispose();
+            _gameTableViewAccessor?.Dispose();
+            _gameViewStream?.Dispose();
+            _gameTableViewStream?.Dispose();
+            _gameTableMemoryMappedFile?.Dispose();
+            _gameMemoryMappedFile?.Dispose();
+            _pipeFileStream?.Dispose();
+
             _gameViewAccessor = null;
-
-            _gameTableViewAccessor.Dispose();
             _gameTableViewAccessor = null;
-
-            _clientConnector.Disconnect();
+            _gameViewStream = null;
+            _gameTableViewStream = null;
+            _gameTableMemoryMappedFile = null;
+            _gameMemoryMappedFile = null;
+            _pipeFileStream = null;
 
             _isConnected = false;
         }
@@ -204,7 +218,7 @@ namespace BWAPI.NET
 
             try
             {
-                _clientConnector.SubmitClientData();
+                SubmitClientData();
             }
             catch (Exception e)
             {
@@ -237,7 +251,7 @@ namespace BWAPI.NET
 
             try
             {
-                _clientConnector.WaitForServerData();
+                WaitForServerData();
             }
             catch (Exception e)
             {
@@ -270,6 +284,72 @@ namespace BWAPI.NET
             }
         }
 
+        private MemoryMappedViewAccessor GetGameTableViewAccessor()
+        {
+            _gameTableMemoryMappedFile ??= MemoryMappedFile.OpenExisting("Local\\bwapi_shared_memory_game_list", MemoryMappedFileRights.ReadWrite, HandleInheritability.None);
+            return _gameTableMemoryMappedFile.CreateViewAccessor(0, GameTable.Size, MemoryMappedFileAccess.ReadWrite);
+        }
+
+        private MemoryMappedViewAccessor GetGameViewAccessor(int serverProcID)
+        {
+            string sharedMemoryName = "Local\\bwapi_shared_memory_" + serverProcID;
+
+            try
+            {
+                _gameMemoryMappedFile ??= MemoryMappedFile.OpenExisting(sharedMemoryName, MemoryMappedFileRights.ReadWrite, HandleInheritability.None);
+                return _gameMemoryMappedFile.CreateViewAccessor(0, ClientData.GameData_.Size, MemoryMappedFileAccess.ReadWrite);
+            }
+            catch (Exception e)
+            {
+                throw new SharedMemoryConnectionException(sharedMemoryName, e);
+            }
+        }
+
+        private MemoryMappedViewStream GetGameTableViewStream()
+        {
+            _gameTableMemoryMappedFile ??= MemoryMappedFile.OpenExisting("Local\\bwapi_shared_memory_game_list", MemoryMappedFileRights.ReadWrite, HandleInheritability.None);
+            return _gameTableMemoryMappedFile.CreateViewStream(0, GameTable.Size, MemoryMappedFileAccess.ReadWrite);
+        }
+
+        private MemoryMappedViewStream GetGameViewStream(int serverProcID)
+        {
+            string sharedMemoryName = "Local\\bwapi_shared_memory_" + serverProcID;
+
+            try
+            {
+                _gameMemoryMappedFile ??= MemoryMappedFile.OpenExisting(sharedMemoryName, MemoryMappedFileRights.ReadWrite, HandleInheritability.None);
+                return _gameMemoryMappedFile.CreateViewStream(0, ClientData.GameData_.Size, MemoryMappedFileAccess.ReadWrite);
+            }
+            catch (Exception e)
+            {
+                throw new SharedMemoryConnectionException(sharedMemoryName, e);
+            }
+        }
+
+        private void ConnectSharedLock(int serverProcID)
+        {
+            string communicationPipe = "\\\\.\\pipe\\bwapi_pipe_" + serverProcID;
+
+            try
+            {
+                _pipeFileStream ??= new FileStream(communicationPipe, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, 0);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new SharedLockConnectionException("Unable to open communications pipe: " + communicationPipe, e);
+            }
+        }
+
+        private void WaitForServerData()
+        {
+            while (_pipeFileStream.ReadByte() != 2) { }
+        }
+
+        private void SubmitClientData()
+        {
+            _pipeFileStream.WriteByte(1);
+        }
+
         public bool IsConnected
         {
             get => _isConnected;
@@ -283,6 +363,16 @@ namespace BWAPI.NET
         public MemoryMappedViewAccessor GameViewAccessor
         {
             get => _gameViewAccessor;
+        }
+
+        public MemoryMappedViewStream GameTableViewStream
+        {
+            get => _gameTableViewStream;
+        }
+
+        public MemoryMappedViewStream GameViewStream
+        {
+            get => _gameViewStream;
         }
     }
 }
