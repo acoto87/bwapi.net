@@ -14,6 +14,15 @@ namespace BWAPI.NET
         public static readonly WalkPosition Unknown = new WalkPosition(32000 / PointHelper.WalkPositionScale, 32064 / PointHelper.WalkPositionScale);
         public static readonly WalkPosition Origin = new WalkPosition(0, 0);
 
+        public static readonly WalkPosition TopLeft = new WalkPosition(-1, -1);
+        public static readonly WalkPosition Top = new WalkPosition(0, -1);
+        public static readonly WalkPosition TopRight = new WalkPosition(1, -1);
+        public static readonly WalkPosition Left = new WalkPosition(-1, 0);
+        public static readonly WalkPosition Right = new WalkPosition(1, 0);
+        public static readonly WalkPosition BottomRight = new WalkPosition(1, 1);
+        public static readonly WalkPosition Bottom = new WalkPosition(0, 1);
+        public static readonly WalkPosition BottomLeft = new WalkPosition(-1, 1);
+
         public readonly int x;
         public readonly int y;
 

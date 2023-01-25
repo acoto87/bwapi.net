@@ -442,6 +442,17 @@ namespace BWAPI.NET
         }
 
         /// <summary>
+        /// Retrieves the number of all units owned by the neutral player (resources, critters,
+        /// etc.) that were available at the beginning of the game.
+        /// It will count units that are inaccessible.
+        /// </summary>
+        /// <returns>The number of all units owned by the neutral player.</returns>
+        public int GetStaticNeutralUnitsCount()
+        {
+            return _staticNeutralUnits.Count;
+        }
+
+        /// <summary>
         /// Retrieves the set of all accessible bullets.
         /// </summary>
         /// <returns>List<Bullet> containing all accessible {@link Bullet} objects.</returns>
@@ -1614,6 +1625,22 @@ namespace BWAPI.NET
             return _startLocations;
         }
 
+        /// <summary>
+        /// Retrieves the number of all starting locations for the current map. A
+        /// starting location is essentially a candidate for a player's spawn point.
+        /// </summary>
+        /// <returns>The number of all starting locations for the current map.</returns>
+        public int GetStartLocationsCount()
+        {
+            return _startLocations.Count;
+        }
+
+        /// <summary>
+        /// Formats a string with a set of colors.
+        /// </summary>
+        /// <param name="str">The string to be formatted.</param>
+        /// <param name="colors">The colors to format.</param>
+        /// <returns>The formatted string.</returns>
         public static string FormatString(string str, params Text[] colors)
         {
             return colors.Length > 0 ? string.Format(str, colors) : str;

@@ -14,6 +14,15 @@ namespace BWAPI.NET
         public static readonly Position Unknown = new Position(32000 / PointHelper.PositionScale, 32064 / PointHelper.PositionScale);
         public static readonly Position Origin = new Position(0, 0);
 
+        public static readonly Position TopLeft = new Position(-1, -1);
+        public static readonly Position Top = new Position(0, -1);
+        public static readonly Position TopRight = new Position(1, -1);
+        public static readonly Position Left = new Position(-1, 0);
+        public static readonly Position Right = new Position(1, 0);
+        public static readonly Position BottomRight = new Position(1, 1);
+        public static readonly Position Bottom = new Position(0, 1);
+        public static readonly Position BottomLeft = new Position(-1, 1);
+
         public readonly int x;
         public readonly int y;
 

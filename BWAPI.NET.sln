@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BWAPI.NET.Tests", "tests\BW
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarineHell", "examples\MarineHell\MarineHell.csproj", "{1393C122-9AE5-4B6B-B623-0CD12F6F5079}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStateDumperBot", "GameStateDumper\GameStateDumperBot.csproj", "{B926CC1D-AD37-4BDD-9427-F176ED2D4CDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStateDumperBot", "examples\GameStateDumper\GameStateDumperBot.csproj", "{B926CC1D-AD37-4BDD-9427-F176ED2D4CDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

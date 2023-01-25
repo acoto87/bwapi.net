@@ -14,6 +14,15 @@ namespace BWAPI.NET
         public static readonly TilePosition Unknown = new TilePosition(32000 / PointHelper.TilePositionScale, 32064 / PointHelper.TilePositionScale);
         public static readonly TilePosition Origin = new TilePosition(0, 0);
 
+        public static readonly TilePosition TopLeft = new TilePosition(-1, -1);
+        public static readonly TilePosition Top = new TilePosition(0, -1);
+        public static readonly TilePosition TopRight = new TilePosition(1, -1);
+        public static readonly TilePosition Left = new TilePosition(-1, 0);
+        public static readonly TilePosition Right = new TilePosition(1, 0);
+        public static readonly TilePosition BottomRight = new TilePosition(1, 1);
+        public static readonly TilePosition Bottom = new TilePosition(0, 1);
+        public static readonly TilePosition BottomLeft = new TilePosition(-1, 1);
+
         public readonly int x;
         public readonly int y;
 

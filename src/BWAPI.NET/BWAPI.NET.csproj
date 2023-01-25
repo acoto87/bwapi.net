@@ -13,7 +13,7 @@
             A pure .NET BWAPI client implementation.
         </PackageDescription>
         <PackageTags>api;ai;bots;starcraft;bwapi;startcraft-broodwar;broodwar;startcraft-bot;startcraft-broodwar-bot;startcraft-ai;bwapi-net;broodwar-bot;broodwar-api;</PackageTags>
-        <Version>0.1.5</Version>
+        <Version>0.1.7</Version>
         <Authors>Alejandro Coto Gutiérrez</Authors>
         <Product>BWAPI.NET</Product>
         <SignAssembly>False</SignAssembly>
