@@ -11,6 +11,7 @@ public class LoadFromFrame0BufferTests
     [InlineData("(2)Astral Balance.scm_frame0_buffer.bin")]
     [InlineData("(2)Breaking Point.scx_frame0_buffer.bin")]
     [InlineData("(2)Isolation.scx_frame0_buffer.bin")]
+    [InlineData("(2)Crystallis.scm_frame0_buffer.bin")]
     [InlineData("(3)Stepping Stones.scm_frame0_buffer.bin")]
     [InlineData("(4)Arctic Station.scx_frame0_buffer.bin")]
     [InlineData("(4)Space Debris.scm_frame0_buffer.bin")]

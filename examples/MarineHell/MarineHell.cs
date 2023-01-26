@@ -525,7 +525,7 @@ namespace MarineHell
 
         private Position GetNearestChokepointCenter(Position position)
         {
-            return _chokePointsCenters.MinBy(x => x.GetDistance(position));
+            return _chokePointsCenters.Count > 0 ? _chokePointsCenters.MinBy(x => x.GetDistance(position)) : position;
         }
 
         private static Base GetStartLocation(Player player)
